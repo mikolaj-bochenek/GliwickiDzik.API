@@ -38,3 +38,10 @@ testem.log
 #System Files
 .DS_Store
 Thumbs.db
+
+# my additional
+.vscode
+bin
+obj
+*.db
+wwwroot
