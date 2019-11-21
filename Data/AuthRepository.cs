@@ -1,5 +1,7 @@
+using System.Text;
 using System.Threading.Tasks;
 using GliwickiDzik.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GliwickiDzik.Data
 {
@@ -11,19 +13,64 @@ namespace GliwickiDzik.Data
         {
             _context = context;
         }
-        public Task<bool> IsUserExist(string username)
+        public async Task<bool> IsUserExist(string username)
         {
-            throw new System.NotImplementedException();
+            if(await _context.Users.AnyAsync(u => u.Username == username))
+                return true;
+
+            return false;
         }
 
-        public Task<User> Login(string username, string password)
+        public async Task<User> Login(string username, string password)
         {
-            throw new System.NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+            if(user == null)
+                return null;
+            
+            if(!VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
+                return null;
+            
+            return user;
         }
 
-        public Task<User> Register(User user, string password)
+        public async Task<User> Register(User user, string password)
         {
-            throw new System.NotImplementedException();
+            byte[] passwordHash, passwordSalt;
+
+            GetPasswordHashAndSalt(password, out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            return user;
+        }
+
+        private void GetPasswordHashAndSalt(string password, out byte[] passwordHash, out byte[] passwordSalt) 
+        {
+            using(var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        private bool VerifyPassword(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using(var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                for(int i = 0; i < computeHash.Length; i++ )
+                {
+                    if(computeHash[i] != passwordHash[i])
+                        return false;
+                }
+                return true;
+            }
         }
     }
 }
