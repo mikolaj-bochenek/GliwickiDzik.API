@@ -41,7 +41,7 @@ namespace GliwickiDzik.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDTO userForLoginDTO)
         {
-            var userToLogin = await _repository.Login(userForLoginDTO.Username, userForLoginDTO.Password);
+            var userToLogin = await _repository.Login(userForLoginDTO.Username.ToLower(), userForLoginDTO.Password);
 
             if(userToLogin == null)
                 return Unauthorized();
