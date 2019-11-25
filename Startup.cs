@@ -37,6 +37,7 @@ namespace GliwickiDzik
             });
             services.AddCors();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IExerciseRepository,ExerciseRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(option =>{
                     option.TokenValidationParameters = new TokenValidationParameters
