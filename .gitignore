@@ -40,8 +40,9 @@ testem.log
 Thumbs.db
 
 # my additional
-.vscode
-bin
-obj
+.vscode/
+bin/
+obj/
 *.db
-wwwroot
+wwwroot/
+.vs/
