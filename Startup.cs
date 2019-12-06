@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -30,11 +31,12 @@ namespace GliwickiDzik
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<DataContext>(x =>
             {
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+            services.AddControllers().AddNewtonsoftJson();
             services.AddCors();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IExerciseRepository,ExerciseRepository>();
@@ -51,16 +53,27 @@ namespace GliwickiDzik
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             app.UseCors(u => u.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            app.UseAuthentication();
+            app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseMvc();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            //app.UseMvc();
+            app.UseEndpoints(endpoints =>
+                 {
+                    endpoints.MapControllerRoute(
+                        name: "spa",
+                        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                   // endpoints.MapFallbackToController("Index", "Home", "Admin");
+                });
         }
     }
 }
