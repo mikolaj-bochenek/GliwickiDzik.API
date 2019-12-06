@@ -26,6 +26,7 @@ namespace GliwickiDzik
             Configuration = configuration;
         }
 
+        readonly string MyAllowSpecificOrigins = "_TestPolicy";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -37,7 +38,18 @@ namespace GliwickiDzik
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddControllers().AddNewtonsoftJson();
-            services.AddCors();
+            services.AddCors(options =>
+    {
+        options.AddPolicy(MyAllowSpecificOrigins,
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000")
+                                .AllowAnyOrigin() 
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
+                                //.AllowCredentials();
+        });
+    });
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IExerciseRepository,ExerciseRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -59,10 +71,10 @@ namespace GliwickiDzik
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors(u => u.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            app.UseDefaultFiles();
+            //app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
             app.UseAuthorization();
             //app.UseMvc();
@@ -70,7 +82,7 @@ namespace GliwickiDzik
                  {
                     endpoints.MapControllerRoute(
                         name: "spa",
-                        pattern: "{controller=Home}/{action=Index}/{id?}");
+                        pattern: "{controller=Home}/{action=Index}/{id?}").RequireCors(MyAllowSpecificOrigins);
 
                    // endpoints.MapFallbackToController("Index", "Home", "Admin");
                 });
