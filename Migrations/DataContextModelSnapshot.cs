@@ -37,9 +37,14 @@ namespace GliwickiDzik.Migrations
                     b.Property<int>("LikeCounter")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("PlanId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CommenterId");
+
+                    b.HasIndex("PlanId");
 
                     b.ToTable("CommentModel");
                 });
@@ -50,6 +55,9 @@ namespace GliwickiDzik.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("PlanId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Reps")
                         .HasColumnType("INTEGER");
 
@@ -57,6 +65,8 @@ namespace GliwickiDzik.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
 
                     b.ToTable("ExerciseForTrainingModel");
                 });
@@ -70,29 +80,17 @@ namespace GliwickiDzik.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ExerciseForTrainingId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExerciseForTrainingId");
+
                     b.ToTable("ExerciseModel");
-                });
-
-            modelBuilder.Entity("GliwickiDzik.API.Models.LikeModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IsLikedId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UserLikesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LikeModel");
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.MessageModel", b =>
@@ -196,51 +194,7 @@ namespace GliwickiDzik.Migrations
                     b.ToTable("TrainingPlanModel");
                 });
 
-            modelBuilder.Entity("GliwickiDzik.Models.Exercise", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("TrainingProgramId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TrainingProgramId");
-
-                    b.ToTable("Exercises");
-                });
-
-            modelBuilder.Entity("GliwickiDzik.Models.TrainingProgram", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DaysOfWeek")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TrainingPrograms");
-                });
-
-            modelBuilder.Entity("GliwickiDzik.Models.User", b =>
+            modelBuilder.Entity("GliwickiDzik.Models.UserModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -287,27 +241,51 @@ namespace GliwickiDzik.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("UserModel");
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.CommentModel", b =>
                 {
-                    b.HasOne("GliwickiDzik.Models.User", "Commenter")
+                    b.HasOne("GliwickiDzik.Models.UserModel", "Commenter")
                         .WithMany()
                         .HasForeignKey("CommenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GliwickiDzik.API.Models.TrainingPlanModel", "Plan")
+                        .WithMany("Comments")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseForTrainingModel", b =>
+                {
+                    b.HasOne("GliwickiDzik.API.Models.TrainingPlanModel", "Plan")
+                        .WithMany("TreningExercises")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseModel", b =>
+                {
+                    b.HasOne("GliwickiDzik.API.Models.ExerciseForTrainingModel", "ExerciseForTraining")
+                        .WithMany("Exercises")
+                        .HasForeignKey("ExerciseForTrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.MessageModel", b =>
                 {
-                    b.HasOne("GliwickiDzik.Models.User", "Recipient")
+                    b.HasOne("GliwickiDzik.Models.UserModel", "Recipient")
                         .WithMany()
                         .HasForeignKey("RecipientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GliwickiDzik.Models.User", "Sender")
+                    b.HasOne("GliwickiDzik.Models.UserModel", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -316,8 +294,8 @@ namespace GliwickiDzik.Migrations
 
             modelBuilder.Entity("GliwickiDzik.API.Models.PhotoModel", b =>
                 {
-                    b.HasOne("GliwickiDzik.Models.User", "User")
-                        .WithMany()
+                    b.HasOne("GliwickiDzik.Models.UserModel", "User")
+                        .WithMany("Photos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -325,24 +303,8 @@ namespace GliwickiDzik.Migrations
 
             modelBuilder.Entity("GliwickiDzik.API.Models.TrainingPlanModel", b =>
                 {
-                    b.HasOne("GliwickiDzik.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GliwickiDzik.Models.Exercise", b =>
-                {
-                    b.HasOne("GliwickiDzik.Models.TrainingProgram", null)
-                        .WithMany("Exercises")
-                        .HasForeignKey("TrainingProgramId");
-                });
-
-            modelBuilder.Entity("GliwickiDzik.Models.TrainingProgram", b =>
-                {
-                    b.HasOne("GliwickiDzik.Models.User", "User")
-                        .WithMany()
+                    b.HasOne("GliwickiDzik.Models.UserModel", "User")
+                        .WithMany("Plans")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

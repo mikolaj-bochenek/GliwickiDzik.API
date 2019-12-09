@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System;
+using GliwickiDzik.API.Models;
 
 namespace GliwickiDzik.Models
 {
-    public class User
+    public class UserModel
     {
         public int Id { get; set; }
 
@@ -22,5 +24,7 @@ namespace GliwickiDzik.Models
         public float Growth  { get; set; }
         public float Weight { get; set; }
         public string Description { get; set; }
+        public ICollection<PhotoModel> Photos { get; set; }
+        public ICollection<TrainingPlanModel> Plans  { get; set; }
     }
 }

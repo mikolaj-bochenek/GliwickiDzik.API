@@ -15,15 +15,15 @@ namespace GliwickiDzik.Data
         }
         public async Task<bool> IsUserExist(string username)
         {
-            if(await _context.Users.AnyAsync(u => u.Username == username))
+            if(await _context.UserModel.AnyAsync(u => u.Username == username))
                 return true;
 
             return false;
         }
 
-        public async Task<User> Login(string username, string password)
+        public async Task<UserModel> Login(string username, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var user = await _context.UserModel.FirstOrDefaultAsync(u => u.Username == username);
 
             if(user == null)
                 return null;
@@ -34,7 +34,7 @@ namespace GliwickiDzik.Data
             return user;
         }
 
-        public async Task<User> Register(User user, string password)
+        public async Task<UserModel> Register(UserModel user, string password)
         {
             byte[] passwordHash, passwordSalt;
 
@@ -43,7 +43,7 @@ namespace GliwickiDzik.Data
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            await _context.Users.AddAsync(user);
+            await _context.UserModel.AddAsync(user);
             await _context.SaveChangesAsync();
 
             return user;

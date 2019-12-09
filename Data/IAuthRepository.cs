@@ -5,8 +5,8 @@ namespace GliwickiDzik.Data
 {
     public interface IAuthRepository
     {
-        Task<User> Login(string username, string password);
-        Task<User> Register(User user, string password);
+        Task<UserModel> Login(string username, string password);
+        Task<UserModel> Register(UserModel user, string password);
         Task<bool> IsUserExist(string username);
     }
 }

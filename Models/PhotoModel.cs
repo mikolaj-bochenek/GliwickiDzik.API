@@ -9,7 +9,7 @@ namespace GliwickiDzik.API.Models
         public string Url { get; set; }
         public string Description { get; set; }
         public DateTime DateOfAdded { get; set; }
-        public User User { get; set; }
+        public UserModel User { get; set; }
         public int UserId { get; set; }
         public bool IsMain { get; set; }
     }

@@ -35,7 +35,7 @@ namespace GliwickiDzik.Controllers
             if (await _repository.IsUserExist(userForRegisterDTO.Username))
                 return BadRequest("Użytkownik o podanym loginie juz istnieje");
 
-            var userToCreate = new User
+            var userToCreate = new UserModel
             {
                 Username = userForRegisterDTO.Username
             };
