@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using GliwickiDzik.Data;
 using GliwickiDzik.DTOs;
 using GliwickiDzik.Models;
@@ -19,10 +20,12 @@ namespace GliwickiDzik.Controllers
     {
         private readonly IAuthRepository _repository;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repository, IConfiguration config)
+        public AuthController(IAuthRepository repository, IConfiguration config, IMapper mapper)
         {
             _config = config;
+            _mapper = mapper;
             _repository = repository;
         }
 
@@ -35,11 +38,8 @@ namespace GliwickiDzik.Controllers
             if (await _repository.IsUserExist(userForRegisterDTO.Username))
                 return BadRequest("Użytkownik o podanym loginie juz istnieje");
 
-            var userToCreate = new UserModel
-            {
-                Username = userForRegisterDTO.Username
-            };
-
+            var userToCreate = _mapper.Map<UserModel>(userForRegisterDTO);
+            
             var createdUser = await _repository.Register(userToCreate, userForRegisterDTO.Password);
 
             return StatusCode(200);
