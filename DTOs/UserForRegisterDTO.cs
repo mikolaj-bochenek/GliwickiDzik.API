@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace GliwickiDzik.DTOs
@@ -10,5 +11,21 @@ namespace GliwickiDzik.DTOs
         [StringLength(12, MinimumLength=6, 
         ErrorMessage="Password has to contain from 6 to 12 characters!")]
         public string Password { get; set; }
+        [Required(ErrorMessage="Email cannot be empty!")]
+        public string Email { get; set; }
+        [Required(ErrorMessage="Select your gender!")]
+        public string Gender { get; set; }
+        [Required(ErrorMessage="Select your date of birth")]
+        public DateTime DateOfBirth { get; set; }
+        [Required(ErrorMessage="Biceps size cannot be empty")]
+        public float BicepsSize { get; set; }
+        public DateTime DateOfCreated { get; set; }
+        public DateTime LastActive { get; set; }
+
+        public UserForRegisterDTO()
+        {
+            DateOfCreated = DateTime.Now;
+            LastActive = DateTime.Now;
+        }
     }
 }
