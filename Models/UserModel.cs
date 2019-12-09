@@ -24,6 +24,7 @@ namespace GliwickiDzik.Models
         public float Growth  { get; set; }
         public float Weight { get; set; }
         public string Description { get; set; }
+        public float BicepsSize { get; set; }
         public ICollection<PhotoModel> Photos { get; set; }
         public ICollection<TrainingPlanModel> Plans  { get; set; }
     }
