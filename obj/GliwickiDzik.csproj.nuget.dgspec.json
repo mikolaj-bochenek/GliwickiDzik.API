@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {}
+    "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {}
   },
   "projects": {
-    "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {
+    "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
+        "projectUniqueName": "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
         "projectName": "GliwickiDzik",
-        "projectPath": "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
+        "projectPath": "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
         "packagesPath": "C:\\Users\\bochc\\.nuget\\packages\\",
-        "outputPath": "c:\\Projects\\GliwickiDzik.API\\obj\\",
+        "outputPath": "C:\\Projects\\GliwickiDzik.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

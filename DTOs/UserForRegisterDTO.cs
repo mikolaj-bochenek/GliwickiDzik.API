@@ -15,9 +15,9 @@ namespace GliwickiDzik.DTOs
         public string Email { get; set; }
         [Required(ErrorMessage="Select your gender!")]
         public string Gender { get; set; }
-        [Required(ErrorMessage="Select your date of birth")]
+        [Required(ErrorMessage="Select your date of birth!")]
         public DateTime DateOfBirth { get; set; }
-        [Required(ErrorMessage="Biceps size cannot be empty")]
+        [Required(ErrorMessage="Type your biceps size!")]
         public float BicepsSize { get; set; }
         public DateTime DateOfCreated { get; set; }
         public DateTime LastActive { get; set; }
