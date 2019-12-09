@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using GliwickiDzik.API.Data;
 using GliwickiDzik.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,6 +39,7 @@ namespace GliwickiDzik
             {
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+            services.AddAutoMapper();
             services.AddControllers().AddNewtonsoftJson();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddCors(options =>

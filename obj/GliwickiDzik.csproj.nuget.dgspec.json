@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {}
+    "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {
+    "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
+        "projectUniqueName": "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
         "projectName": "GliwickiDzik",
-        "projectPath": "C:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
+        "projectPath": "c:\\Projects\\GliwickiDzik.API\\GliwickiDzik.csproj",
         "packagesPath": "C:\\Users\\bochc\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\GliwickiDzik.API\\obj\\",
+        "outputPath": "c:\\Projects\\GliwickiDzik.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -41,6 +41,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[4.0.1, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[3.1.0, )"

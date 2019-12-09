@@ -26,7 +26,7 @@ namespace GliwickiDzik.Controllers
             _repository = repository;
         }
 
-        // http:localhost/api/auth/register
+        // http:localhost:5000/api/auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDTO userForRegisterDTO)
         {
