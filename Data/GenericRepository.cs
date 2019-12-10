@@ -42,9 +42,9 @@ namespace GliwickiDzik.API.Data
             _context.Set<T>().AddRange(entities);
         }
 
-        public void Remove(T entity)
+        public void Remove(int id)
         {
-            _context.Set<T>().Remove(entity);
+            _context.Remove(id);
         }
 
         public void RemoveRange(IEnumerable<T> entities)

@@ -41,7 +41,7 @@ namespace GliwickiDzik.API.Data
            return await _context.UserModel.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public void Remove(UserModel entity)
+        public void Remove(int id)
         {
             throw new NotImplementedException();
         }

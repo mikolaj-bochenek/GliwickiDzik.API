@@ -14,7 +14,7 @@ namespace GliwickiDzik.API.Data
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);
-        void Remove(T entity);
+        void Remove(int id);
         void RemoveRange(IEnumerable<T> entities);
         Task<bool> SaveAllAsync();
     }
