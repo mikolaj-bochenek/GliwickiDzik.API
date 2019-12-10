@@ -47,6 +47,7 @@ namespace GliwickiDzik
             services.AddAutoMapper();
             services.AddControllers().AddNewtonsoftJson();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddCors(options =>
     {
         options.AddPolicy(MyAllowSpecificOrigins,
