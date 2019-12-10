@@ -67,7 +67,7 @@ namespace GliwickiDzik.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddYears(100),
+                Expires = DateTime.Now.AddHours(24),
                 SigningCredentials = creds
             };
 
