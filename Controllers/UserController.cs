@@ -32,6 +32,9 @@ namespace GliwickiDzik.Controllers
         {
             var userForGet = await _repository.GetByIdAsync(id);
 
+            if (userForGet == null)
+                return BadRequest("User doesn't exist!");
+
             var userToReturn = _mapper.Map<UserForUseDTO>(userForGet);
 
             return Ok(userToReturn);
