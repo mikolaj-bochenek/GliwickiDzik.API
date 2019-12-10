@@ -51,9 +51,9 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<bool> SaveAllAsync()
+        public async Task<bool> SaveAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
