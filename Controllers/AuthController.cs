@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using GliwickiDzik.API.DTOs;
 using GliwickiDzik.Data;
 using GliwickiDzik.DTOs;
 using GliwickiDzik.Models;
@@ -42,7 +43,9 @@ namespace GliwickiDzik.Controllers
             
             var createdUser = await _repository.Register(userToCreate, userForRegisterDTO.Password);
 
-            return StatusCode(200);
+            var userToUse = _mapper.Map<UserForUseDTO>(createdUser);
+
+            return CreatedAtRoute("GetUser", new { controller = "User", Id = createdUser.Id }, userToUse );
         }
 
         // http:localhost/api/auth/login
