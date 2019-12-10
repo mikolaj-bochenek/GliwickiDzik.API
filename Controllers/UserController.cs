@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GliwickiDzik.Controllers
@@ -9,6 +10,10 @@ namespace GliwickiDzik.Controllers
     [ApiController]
     public class UserController: ControllerBase
     {
-        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUser(int id, UserForEditDTO userForEditDTO)
+        {
+            
+        }
     }
 }
