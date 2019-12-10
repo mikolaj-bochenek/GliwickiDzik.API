@@ -8,12 +8,14 @@ using GliwickiDzik.Models;
 using GliwickiDzik.API.Data;
 using AutoMapper;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GliwickiDzik.Controllers
 {
     //http:localhost:5000/api/user
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController: ControllerBase
     {
         private readonly IUserRepository _repository;
