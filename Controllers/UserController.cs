@@ -42,5 +42,21 @@ namespace GliwickiDzik.Controllers
             
             throw new Exception("Error occured while trying to save in database");
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var userToDelete = await _repository.GetByIdAsync(id);
+            
+            _repository.Remove(userToDelete);
+
+            if (await _repository.SaveAllAsync())
+                return NoContent();
+            
+            throw new Exception("Error occured while trying to save in database");
+        }
     }
 }
