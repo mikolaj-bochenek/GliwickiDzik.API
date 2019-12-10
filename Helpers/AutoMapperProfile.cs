@@ -12,6 +12,7 @@ namespace GliwickiDzik.API.Helpers
             //Method<what map, map to what>();
             CreateMap<UserForRegisterDTO, UserModel>();
             CreateMap<UserForEditDTO, UserModel>();
+            CreateMap<UserModel, UserForUseDTO>();
         }
     }
 }
