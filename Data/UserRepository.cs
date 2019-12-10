@@ -2,12 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GliwickiDzik.Data;
 using GliwickiDzik.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GliwickiDzik.API.Data
 {
     public class UserRepository : IUserRepository
     {
+        private readonly DataContext _context;
+
+        public UserRepository(DataContext context)
+        {
+            _context = context;
+        }
         public void Add(UserModel entity)
         {
             throw new NotImplementedException();
@@ -28,9 +36,9 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<UserModel> GetByIdAsync(int id)
+        public async Task<UserModel> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+           return await _context.UserModel.FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public void Remove(UserModel entity)
