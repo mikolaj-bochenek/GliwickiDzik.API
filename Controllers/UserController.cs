@@ -27,6 +27,16 @@ namespace GliwickiDzik.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("{id}", Name = "GetUser")]
+        public async Task<IActionResult> GetUser(int id)
+        {
+            var userForGet = await _repository.GetByIdAsync(id);
+
+            var userToReturn = _mapper.Map<UserForUseDTO>(userForGet);
+
+            return Ok(userToReturn);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> EditUser(int id, UserForEditDTO userForEditDTO)
         {
