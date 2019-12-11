@@ -15,6 +15,7 @@ namespace GliwickiDzik.Data
         public DbSet<ExerciseModel> ExerciseModel { get; set; }
         public DbSet<MessageModel> MessageModel { get; set; }
         public DbSet<TrainingPlanModel> TrainingPlanModel { get; set; }
+        public DbSet<TrainingModel> TrainingModel { get; set; }
 
     }
 }

@@ -3,10 +3,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GliwickiDzik.Migrations
 {
-    public partial class Initialize : Migration
+    public partial class Iinitailize : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ExerciseModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExerciseModel", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "UserModel",
                 columns: table => new
@@ -25,7 +39,8 @@ namespace GliwickiDzik.Migrations
                     Country = table.Column<string>(nullable: true),
                     Growth = table.Column<float>(nullable: false),
                     Weight = table.Column<float>(nullable: false),
-                    Description = table.Column<string>(nullable: true)
+                    Description = table.Column<string>(nullable: true),
+                    BicepsSize = table.Column<float>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -143,6 +158,28 @@ namespace GliwickiDzik.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TrainingModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: true),
+                    Day = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    TrainingPlanModelId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrainingModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrainingModel_TrainingPlanModel_TrainingPlanModelId",
+                        column: x => x.TrainingPlanModelId,
+                        principalTable: "TrainingPlanModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ExerciseForTrainingModel",
                 columns: table => new
                 {
@@ -150,36 +187,15 @@ namespace GliwickiDzik.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Sets = table.Column<int>(nullable: false),
                     Reps = table.Column<int>(nullable: false),
-                    PlanId = table.Column<int>(nullable: false)
+                    TrainingId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExerciseForTrainingModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExerciseForTrainingModel_TrainingPlanModel_PlanId",
-                        column: x => x.PlanId,
-                        principalTable: "TrainingPlanModel",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExerciseModel",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    ExerciseForTrainingId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExerciseModel", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ExerciseModel_ExerciseForTrainingModel_ExerciseForTrainingId",
-                        column: x => x.ExerciseForTrainingId,
-                        principalTable: "ExerciseForTrainingModel",
+                        name: "FK_ExerciseForTrainingModel_TrainingModel_TrainingId",
+                        column: x => x.TrainingId,
+                        principalTable: "TrainingModel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -195,14 +211,9 @@ namespace GliwickiDzik.Migrations
                 column: "PlanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExerciseForTrainingModel_PlanId",
+                name: "IX_ExerciseForTrainingModel_TrainingId",
                 table: "ExerciseForTrainingModel",
-                column: "PlanId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExerciseModel_ExerciseForTrainingId",
-                table: "ExerciseModel",
-                column: "ExerciseForTrainingId");
+                column: "TrainingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MessageModel_RecipientId",
@@ -220,6 +231,11 @@ namespace GliwickiDzik.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrainingModel_TrainingPlanModelId",
+                table: "TrainingModel",
+                column: "TrainingPlanModelId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrainingPlanModel_UserId",
                 table: "TrainingPlanModel",
                 column: "UserId");
@@ -231,6 +247,9 @@ namespace GliwickiDzik.Migrations
                 name: "CommentModel");
 
             migrationBuilder.DropTable(
+                name: "ExerciseForTrainingModel");
+
+            migrationBuilder.DropTable(
                 name: "ExerciseModel");
 
             migrationBuilder.DropTable(
@@ -240,7 +259,7 @@ namespace GliwickiDzik.Migrations
                 name: "PhotoModel");
 
             migrationBuilder.DropTable(
-                name: "ExerciseForTrainingModel");
+                name: "TrainingModel");
 
             migrationBuilder.DropTable(
                 name: "TrainingPlanModel");

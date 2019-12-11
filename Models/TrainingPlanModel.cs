@@ -16,6 +16,6 @@ namespace GliwickiDzik.API.Models
         public string Level { get; set; }
         public bool IsMain { get; set; }
         public ICollection<CommentModel> Comments { get; set; }
-        public ICollection<ExerciseForTrainingModel> TreningExercises { get; set; }
+        public ICollection<TrainingModel> Trening { get; set; }
     }
 }

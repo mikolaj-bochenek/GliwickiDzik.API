@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GliwickiDzik.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191209184612_Initialize")]
-    partial class Initialize
+    [Migration("20191211191047_Iinitailize")]
+    partial class Iinitailize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,18 +57,18 @@ namespace GliwickiDzik.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PlanId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Reps")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Sets")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("TrainingId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("PlanId");
+                    b.HasIndex("TrainingId");
 
                     b.ToTable("ExerciseForTrainingModel");
                 });
@@ -82,15 +82,10 @@ namespace GliwickiDzik.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ExerciseForTrainingId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExerciseForTrainingId");
 
                     b.ToTable("ExerciseModel");
                 });
@@ -162,6 +157,31 @@ namespace GliwickiDzik.Migrations
                     b.ToTable("PhotoModel");
                 });
 
+            modelBuilder.Entity("GliwickiDzik.API.Models.TrainingModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Day")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TrainingPlanModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainingPlanModelId");
+
+                    b.ToTable("TrainingModel");
+                });
+
             modelBuilder.Entity("GliwickiDzik.API.Models.TrainingPlanModel", b =>
                 {
                     b.Property<int>("Id")
@@ -201,6 +221,9 @@ namespace GliwickiDzik.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<float>("BicepsSize")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("City")
                         .HasColumnType("TEXT");
@@ -263,18 +286,9 @@ namespace GliwickiDzik.Migrations
 
             modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseForTrainingModel", b =>
                 {
-                    b.HasOne("GliwickiDzik.API.Models.TrainingPlanModel", "Plan")
-                        .WithMany("TreningExercises")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseModel", b =>
-                {
-                    b.HasOne("GliwickiDzik.API.Models.ExerciseForTrainingModel", "ExerciseForTraining")
-                        .WithMany("Exercises")
-                        .HasForeignKey("ExerciseForTrainingId")
+                    b.HasOne("GliwickiDzik.API.Models.TrainingModel", "Training")
+                        .WithMany("ExercisesForTraining")
+                        .HasForeignKey("TrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -299,6 +313,15 @@ namespace GliwickiDzik.Migrations
                     b.HasOne("GliwickiDzik.Models.UserModel", "User")
                         .WithMany("Photos")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GliwickiDzik.API.Models.TrainingModel", b =>
+                {
+                    b.HasOne("GliwickiDzik.API.Models.TrainingPlanModel", "TrainingPlanModel")
+                        .WithMany("Trening")
+                        .HasForeignKey("TrainingPlanModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
