@@ -61,14 +61,34 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<TrainingPlanModel>> GetAllAsync()
+        public Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<TrainingPlanModel> GetByIdAsync(int id)
+        public Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansAsync()
         {
-            return await _context.TrainingPlanModel.FirstOrDefaultAsync(t => t.Id == id);
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<TrainingPlanModel>> GetAllTrainingsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ExerciseForTrainingModel> GetExerciseForTrainingAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TrainingModel> GetTrainingAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TrainingPlanModel> GetTrainingPlanAsync(int id)
+        {
+            throw new NotImplementedException();
         }
 
         public void Remove(TrainingPlanModel entity)
@@ -105,25 +125,5 @@ namespace GliwickiDzik.API.Data
         {
             return await _context.SaveChangesAsync() > 0;
         }
-
-        Task<IEnumerable<TrainingModel>> IGenericRepository<TrainingModel>.GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<IEnumerable<ExerciseForTrainingModel>> IGenericRepository<ExerciseForTrainingModel>.GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<TrainingModel> IGenericRepository<TrainingModel>.GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ExerciseForTrainingModel> IGenericRepository<ExerciseForTrainingModel>.GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    }  
 }
