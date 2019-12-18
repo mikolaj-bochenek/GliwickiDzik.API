@@ -31,14 +31,14 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<UserModel>> GetAllAsync()
+        public Task<IEnumerable<UserModel>> GetAllUsersAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<UserModel> GetByIdAsync(int id)
+        public async Task<UserModel> GetUserByIdAsync(int id)
         {
-           return await _context.UserModel.FirstOrDefaultAsync(u => u.Id == id);
+            return await _context.UserModel.FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public void Remove(UserModel entity)
