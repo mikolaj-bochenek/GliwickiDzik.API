@@ -30,7 +30,7 @@ namespace GliwickiDzik.Controllers
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var userForGet = await _repository.GetByIdAsync(id);
+            var userForGet = await _repository.GetUserByIdAsync(id);
 
             if (userForGet == null)
                 return BadRequest("User doesn't exist!");
@@ -46,7 +46,7 @@ namespace GliwickiDzik.Controllers
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userForEdit = await _repository.GetByIdAsync(id);
+            var userForEdit = await _repository.GetUserByIdAsync(id);
 
             _mapper.Map(userForEditDTO, userForEdit);
 
@@ -62,7 +62,7 @@ namespace GliwickiDzik.Controllers
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var userToDelete = await _repository.GetByIdAsync(id);
+            var userToDelete = await _repository.GetUserByIdAsync(id);
             
             _repository.Remove(userToDelete);
 
