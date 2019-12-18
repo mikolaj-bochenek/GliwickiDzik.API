@@ -1,3 +1,9 @@
+using System;
+using System.Threading.Tasks;
+using AutoMapper;
+using GliwickiDzik.API.Data;
+using GliwickiDzik.API.DTOs;
+using GliwickiDzik.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,8 +13,44 @@ namespace GliwickiDzik.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TrainingController
+    public class TrainingController : ControllerBase
     {
-        
+        private readonly ITrainingRepository _repository;
+        private readonly IMapper _mapper;
+
+        public TrainingController(ITrainingRepository repository, IMapper mapper)
+        {
+            _repository = repository;
+            _mapper = mapper;
+        }
+
+        [HttpPost("AddExercise")]
+        public async Task<IActionResult> CreateExersiceForTraining(int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
+        {
+            if (exerciseForTrainingForCreateDTO == null)
+                return BadRequest("Object cannot be null!");
+
+            var exericeToCreate = _mapper.Map<ExerciseForTrainingModel>(exerciseForTrainingForCreateDTO);
+            _repository.Add(exericeToCreate);
+
+            if (await _repository.SaveAllTrainings())
+                return NoContent();
+            
+            throw new Exception("Error occured while trying to save in database");
+        }
+
+        [HttpGet("GetAllExercises")]
+        public async Task<IActionResult> GetAllExercisesAsync(int userId, int trainingId)
+        {
+            //var trainingFromRepo = await _repository.GetTrainingAsync(trainingId);
+            var exercises = await _repository.GetAllExercisesForTrainingAsync(trainingId);
+
+            if (exercises == null)
+                return BadRequest("Training doesn't contain any exercises");
+            
+            var exercisesToReturn = _mapper.Map<ExerciseForTrainingForEditDTO>(exercises);
+
+            return Ok(exercisesToReturn);
+        }
     }
 }

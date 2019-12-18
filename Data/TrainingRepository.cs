@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GliwickiDzik.API.Models;
@@ -61,9 +62,10 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync()
+        public async Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync(int trainingId)
         {
-            throw new NotImplementedException();
+            
+            return await _context.ExerciseForTrainingModel.Where(t => t.TrainingId == trainingId).ToListAsync();
         }
 
         public Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansAsync()
@@ -81,9 +83,9 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<TrainingModel> GetTrainingAsync(int id)
+        public async Task<TrainingModel> GetTrainingAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.TrainingModel.FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public Task<TrainingPlanModel> GetTrainingPlanAsync(int id)
@@ -122,6 +124,11 @@ namespace GliwickiDzik.API.Data
         }
 
         public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> SaveAllTrainings()
         {
             return await _context.SaveChangesAsync() > 0;
         }

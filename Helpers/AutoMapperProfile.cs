@@ -1,5 +1,6 @@
 using AutoMapper;
 using GliwickiDzik.API.DTOs;
+using GliwickiDzik.API.Models;
 using GliwickiDzik.DTOs;
 using GliwickiDzik.Models;
 
@@ -13,6 +14,11 @@ namespace GliwickiDzik.API.Helpers
             CreateMap<UserForRegisterDTO, UserModel>();
             CreateMap<UserForEditDTO, UserModel>();
             CreateMap<UserModel, UserForUseDTO>();
+
+            CreateMap<ExerciseForTrainingForCreateDTO, ExerciseForTrainingModel>();
+            CreateMap<ExerciseForTrainingModel, ExerciseForTrainingForEditDTO>();
+
+
         }
     }
 }
