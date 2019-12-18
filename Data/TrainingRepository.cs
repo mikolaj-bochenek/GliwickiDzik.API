@@ -3,39 +3,47 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GliwickiDzik.API.Models;
+using GliwickiDzik.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace GliwickiDzik.API.Data
 {
     public class TrainingRepository : ITrainingRepository
     {
+        private readonly DataContext _context;
+
+        public TrainingRepository(DataContext context)
+        {
+            _context = context;
+        }
         public void Add(TrainingPlanModel entity)
         {
-            throw new NotImplementedException();
+            _context.TrainingPlanModel.Add(entity);
         }
 
         public void Add(TrainingModel entity)
         {
-            throw new NotImplementedException();
+            _context.TrainingModel.Add(entity);
         }
 
         public void Add(ExerciseForTrainingModel entity)
         {
-            throw new NotImplementedException();
+            _context.ExerciseForTrainingModel.Add(entity);
         }
 
         public void AddRange(IEnumerable<TrainingPlanModel> entities)
         {
-            throw new NotImplementedException();
+            _context.TrainingPlanModel.AddRange(entities);
         }
 
         public void AddRange(IEnumerable<TrainingModel> entities)
         {
-            throw new NotImplementedException();
+            _context.TrainingModel.AddRange(entities);
         }
 
         public void AddRange(IEnumerable<ExerciseForTrainingModel> entities)
         {
-            throw new NotImplementedException();
+            _context.ExerciseForTrainingModel.AddRange(entities);
         }
 
         public Task<IEnumerable<TrainingPlanModel>> FindAsync(Expression<Func<TrainingPlanModel, bool>> predicate)
@@ -58,44 +66,44 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<TrainingPlanModel> GetByIdAsync(int id)
+        public async Task<TrainingPlanModel> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.TrainingPlanModel.FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public void Remove(TrainingPlanModel entity)
         {
-            throw new NotImplementedException();
+            _context.TrainingPlanModel.Remove(entity);
         }
 
         public void Remove(TrainingModel entity)
         {
-            throw new NotImplementedException();
+            _context.TrainingModel.Remove(entity);
         }
 
         public void Remove(ExerciseForTrainingModel entity)
         {
-            throw new NotImplementedException();
+             _context.ExerciseForTrainingModel.Remove(entity);
         }
 
         public void RemoveRange(IEnumerable<TrainingPlanModel> entities)
         {
-            throw new NotImplementedException();
+             _context.TrainingPlanModel.RemoveRange(entities);
         }
 
         public void RemoveRange(IEnumerable<TrainingModel> entities)
         {
-            throw new NotImplementedException();
+            _context.TrainingModel.RemoveRange(entities);
         }
 
         public void RemoveRange(IEnumerable<ExerciseForTrainingModel> entities)
         {
-            throw new NotImplementedException();
+            _context.ExerciseForTrainingModel.RemoveRange(entities);
         }
 
-        public Task<bool> SaveAllAsync()
+        public async Task<bool> SaveAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.SaveChangesAsync() > 0;
         }
 
         Task<IEnumerable<TrainingModel>> IGenericRepository<TrainingModel>.GetAllAsync()
