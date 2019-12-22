@@ -67,10 +67,13 @@ namespace GliwickiDzik.API.Data
             
             return await _context.ExerciseForTrainingModel.Where(t => t.TrainingId == trainingId).ToListAsync();
         }
-
-        public Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansAsync()
+//Nie można niejawnie przekonwertować typu „Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<GliwickiDzik.API.Models.TrainingPlanModel, System.Collections.Generic.ICollection<GliwickiDzik.API.Models.TrainingModel>>” na „System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<GliwickiDzik.API.Models.TrainingPlanModel>>”. Istnieje konwersja jawna (czy nie brakuje rzutu?). [GliwickiDzik]
+        public async Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansAsync()
         {
-            throw new NotImplementedException();
+            var trainingPlan = await _context.TrainingPlanModel.Include(p => p.Trening).ToListAsync();
+            trainingPlan.OrderByDescending(p => p.DateOfAdded);
+
+            return trainingPlan;
         }
 
         public Task<IEnumerable<TrainingPlanModel>> GetAllTrainingsAsync()
