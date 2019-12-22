@@ -57,6 +57,23 @@ namespace GliwickiDzik.API.Controllers
             
             throw new Exception("Error occured while trying to save in database");
         }
+        
+        [HttpPost("AddTraining/{trainingPlanId}")]
+        public async Task<IActionResult> CreateTrainingPlan(int trainingPlanId, TrainingForCreateDTO trainingForCreateDTO)
+        {
+            if (trainingForCreateDTO == null)
+                return BadRequest("Object cannot be null!");
+            
+            var trainingForCreate = _mapper.Map<TrainingPlanModel>(trainingForCreateDTO);
+            trainingForCreate.UserId = trainingPlanId;
+
+            _repository.Add(trainingForCreate);
+
+            if (await _repository.SaveAllTrainings())
+                return NoContent();
+            
+            throw new Exception("Error occured while trying to save in database");
+        }
 
         [HttpGet("GetAllExercises")]
         public async Task<IActionResult> GetAllExercisesAsync(int userId, int trainingId)
