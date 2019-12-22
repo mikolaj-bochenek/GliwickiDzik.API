@@ -41,13 +41,14 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error occured while trying to save in database");
         }
 
-        [HttpPost("AddTrainingPlan")]
-        public async Task<IActionResult> CreateTrainingPlan(TrainingPlanForCreateDTO trainingPlanForCreateDTO)
+        [HttpPost("AddTrainingPlan/{userId}")]
+        public async Task<IActionResult> CreateTrainingPlan(int userid, TrainingPlanForCreateDTO trainingPlanForCreateDTO)
         {
             if (trainingPlanForCreateDTO == null)
                 return BadRequest("Object cannot be null!");
             
             var trainingPlanForCreate = _mapper.Map<TrainingPlanModel>(trainingPlanForCreateDTO);
+            trainingPlanForCreate.UserId = userid;
 
             _repository.Add(trainingPlanForCreate);
 
