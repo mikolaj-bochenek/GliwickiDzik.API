@@ -44,10 +44,12 @@ namespace GliwickiDzik
             {
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-            //services.AddAutoMapper();
+            services.AddAutoMapper();
             services.AddControllers().AddNewtonsoftJson();
+            services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITrainingRepository, TrainingRepository>();
             services.AddCors(options =>
     {
         options.AddPolicy(MyAllowSpecificOrigins,
@@ -60,9 +62,6 @@ namespace GliwickiDzik
                                 //.AllowCredentials();
         });
     });
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITrainingRepository, TrainingRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(option =>{
                     option.TokenValidationParameters = new TokenValidationParameters

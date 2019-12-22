@@ -55,6 +55,9 @@ namespace GliwickiDzik.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Reps")
                         .HasColumnType("INTEGER");
 
