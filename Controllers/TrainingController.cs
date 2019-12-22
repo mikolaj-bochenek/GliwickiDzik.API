@@ -44,10 +44,10 @@ namespace GliwickiDzik.API.Controllers
         [HttpPost("AddTrainingPlan")]
         public async Task<IActionResult> CreateTrainingPlan(TrainingPlanForCreateDTO trainingPlanForCreateDTO)
         {
-            if (exerciseForTrainingForCreateDTO == null)
+            if (trainingPlanForCreateDTO == null)
                 return BadRequest("Object cannot be null!");
             
-            var trainingPlanForCreate = _mapper.Map<TrainingPlanModel>(exerciseForTrainingForCreateDTO);
+            var trainingPlanForCreate = _mapper.Map<TrainingPlanModel>(trainingPlanForCreateDTO);
 
             _repository.Add(trainingPlanForCreate);
 
