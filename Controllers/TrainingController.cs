@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using GliwickiDzik.API.Data;
@@ -87,6 +88,18 @@ namespace GliwickiDzik.API.Controllers
             var exercisesToReturn = _mapper.Map<ExerciseForTrainingForEditDTO>(exercises);
 
             return Ok(exercisesToReturn);
+        }
+
+        [HttpGet("GetAllTrainingPlans")]
+        public async Task<IActionResult> GetAllTrainingPlans()
+        {
+            var plans = await _repository.GetAllTrainingPlansAsync();
+
+            if (plans == null)
+               return BadRequest("Training doesn't contain any exercises");
+
+            var plansToReturn = _mapper.Map<IEnumerable<TrainingPlansForReturnDTO>>(plans);
+            return Ok(plans);
         }
     }
 }
