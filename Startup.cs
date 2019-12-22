@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using GliwickiDzik.API.Helpers;
+using Newtonsoft.Json.Serialization;
 
 namespace GliwickiDzik
 {
@@ -45,7 +46,7 @@ namespace GliwickiDzik
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddAutoMapper();
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
