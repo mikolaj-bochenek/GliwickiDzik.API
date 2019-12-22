@@ -20,6 +20,8 @@ namespace GliwickiDzik.API.Helpers
 
             CreateMap<TrainingPlanForCreateDTO, TrainingPlanModel>();
 
+            CreateMap<TrainingForCreateDTO, TrainingModel>();
+
         }
     }
 }
