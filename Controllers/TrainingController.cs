@@ -12,7 +12,7 @@ namespace GliwickiDzik.API.Controllers
     //http:localhost:5000/api/training
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class TrainingController : ControllerBase
     {
         private readonly ITrainingRepository _repository;
@@ -24,7 +24,7 @@ namespace GliwickiDzik.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("AddExercise")]
+        [HttpPost("AddExercise/{trainingId}")]
         public async Task<IActionResult> CreateExersiceForTraining(int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
         {
             if (exerciseForTrainingForCreateDTO == null)
@@ -34,6 +34,22 @@ namespace GliwickiDzik.API.Controllers
             exericeToCreate.TrainingId = trainingId;
             
             _repository.Add(exericeToCreate);
+
+            if (await _repository.SaveAllTrainings())
+                return NoContent();
+            
+            throw new Exception("Error occured while trying to save in database");
+        }
+
+        [HttpPost("AddTrainingPlan")]
+        public async Task<IActionResult> CreateTrainingPlan(TrainingPlanForCreateDTO trainingPlanForCreateDTO)
+        {
+            if (exerciseForTrainingForCreateDTO == null)
+                return BadRequest("Object cannot be null!");
+            
+            var trainingPlanForCreate = _mapper.Map<TrainingPlanModel>(exerciseForTrainingForCreateDTO);
+
+            _repository.Add(trainingPlanForCreate);
 
             if (await _repository.SaveAllTrainings())
                 return NoContent();
