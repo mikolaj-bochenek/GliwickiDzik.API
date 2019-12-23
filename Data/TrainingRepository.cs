@@ -69,10 +69,10 @@ namespace GliwickiDzik.API.Data
         }
         public async Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansAsync()
         {
-            var trainingPlan = await _context.TrainingPlanModel.Include(p => p.Trening).ToListAsync();
-            trainingPlan.OrderByDescending(p => p.DateOfAdded);
+            var trainingPlans = await _context.TrainingPlanModel.Include(p => p.Trening).ToListAsync();
+            trainingPlans.OrderByDescending(p => p.DateOfAdded);
 
-            return trainingPlan;
+            return trainingPlans;
         }
 
         public Task<IEnumerable<TrainingPlanModel>> GetAllTrainingsAsync()

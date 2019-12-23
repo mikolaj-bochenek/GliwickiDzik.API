@@ -1,3 +1,4 @@
+using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -36,6 +37,19 @@ namespace GliwickiDzik.API.Controllers
             var trainingPlanToReturn = _mapper.Map<TrainingPlanForReturnDTO>(trainingPlan);
 
             return Ok(trainingPlanToReturn);
+        }
+
+        [HttpGet("GetTrainingPlans")]
+        public async Task<IActionResult> GetTrainingPlansAsync()
+        {   
+            var trainingPlans = await _repository.GetAllTrainingPlansAsync();
+
+            if (trainingPlans == null)
+                return BadRequest("Error: training plans cannot be found");
+            
+            var trainingPlansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(trainingPlans);
+
+            return Ok(trainingPlansToReturn);
         }
 
         [HttpPost("AddExercise/{trainingId}")]
