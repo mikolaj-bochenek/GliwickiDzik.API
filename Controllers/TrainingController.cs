@@ -25,6 +25,19 @@ namespace GliwickiDzik.API.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("GetTrainingPlan/{trainingPlanId}")]
+        public async Task<IActionResult> GetTrainingPlanAsync(int trainingPlanId)
+        {   
+            var trainingPlan = await _repository.GetTrainingPlanAsync(trainingPlanId);
+
+            if (trainingPlan == null)
+                return BadRequest("Error: The training plan cannot be found");
+            
+            var trainingPlanToReturn = _mapper.Map<TrainingPlanForReturnDTO>(trainingPlan);
+
+            return Ok(trainingPlanToReturn);
+        }
+
         [HttpPost("AddExercise/{trainingId}")]
         public async Task<IActionResult> CreateExersiceForTraining(int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
         {
@@ -79,7 +92,6 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("GetAllExercises")]
         public async Task<IActionResult> GetAllExercisesAsync(int userId, int trainingId)
         {
-            //var trainingFromRepo = await _repository.GetTrainingAsync(trainingId);
             var exercises = await _repository.GetAllExercisesForTrainingAsync(trainingId);
 
             if (exercises == null)
@@ -98,7 +110,7 @@ namespace GliwickiDzik.API.Controllers
             if (plans == null)
                return BadRequest("Training doesn't contain any exercises");
 
-            var plansToReturn = _mapper.Map<IEnumerable<TrainingPlansForReturnDTO>>(plans);
+            var plansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(plans);
             return Ok(plans);
         }
     }
