@@ -13,6 +13,6 @@ namespace GliwickiDzik.API.DTOs
         public DateTime DateOfCreate { get; set; }
         public string Level { get; set; }
         public bool IsMain { get; set; }
-        public ICollection<TrainingPlanModel> Trainings { get; set; }
+        public ICollection<TrainingForReturnDTO> Trening { get; set; }
     }
 }
