@@ -22,7 +22,9 @@ namespace GliwickiDzik.API.Helpers
 
             CreateMap<TrainingForCreateDTO, TrainingModel>();
 
-            CreateMap<TrainingPlanModel, TrainingPlansForReturnDTO>();
+            CreateMap<TrainingPlanModel, TrainingPlanForReturnDTO>();
+            //CreateMap<TrainingPlansForReturnDTO, TrainingPlanModel>();
+            CreateMap<TrainingModel, TrainingForReturnDTO>();
 
         }
     }
