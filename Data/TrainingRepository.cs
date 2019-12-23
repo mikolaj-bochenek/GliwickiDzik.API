@@ -90,9 +90,10 @@ namespace GliwickiDzik.API.Data
             return await _context.TrainingModel.FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public Task<TrainingPlanModel> GetTrainingPlanAsync(int id)
+        public async Task<TrainingPlanModel> GetTrainingPlanAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.TrainingPlanModel.Include(t => t.Trening)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public void Remove(TrainingPlanModel entity)
