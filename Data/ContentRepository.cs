@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GliwickiDzik.API.Models;
@@ -66,9 +67,14 @@ namespace GliwickiDzik.API.Data
             return await _context.MessageModel.FirstOrDefaultAsync(m => m.MessageId == messageId);
         }
 
-        public Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId)
+        public async Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId)
         {
-            throw new NotImplementedException();
+            return await _context.MessageModel
+                .Include(s => s.SenderId == userId)
+                .Include(r => r.RecipientId == recipientId)
+                .Where(m => m.RecipientId == userId && m.SenderId == recipientId && m.RecipientDeleted == false
+                         || m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted == false)
+                .OrderByDescending(m => m.DateOfSent).ToListAsync();
         }
 
         public void Remove(MessageModel entity)

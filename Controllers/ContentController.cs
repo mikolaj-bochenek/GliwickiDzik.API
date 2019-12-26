@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -40,6 +41,21 @@ namespace GliwickiDzik.API.Controllers
             var messageToReturn = _mapper.Map<MessageForCreateDTO>(message);
 
             return Ok(messageToReturn);
+        }
+        [HttpGet("GetMessageThread/{recipientId}")]
+        public async Task<IActionResult> GetMessageThreadAsync(int userId, int recipientId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var messages = await _repository.GetMessageThreadAsync(userId, recipientId);
+
+            if (messages == null)
+                return BadRequest("The message thread cannot be found!");
+
+            var messageThread = _mapper.Map<IEnumerable<MessageForCreateDTO>>(messages);
+
+            return Ok(messageThread);
         }
         [HttpPost("AddMessage")]
         public async Task<IActionResult> CreateMessageAsync(int userId, MessageForCreateDTO messageForCreateDTO)
