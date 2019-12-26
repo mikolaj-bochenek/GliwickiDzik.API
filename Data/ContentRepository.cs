@@ -3,19 +3,27 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GliwickiDzik.API.Models;
+using GliwickiDzik.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace GliwickiDzik.API.Data
 {
     public class ContentRepository : IContentRepository
     {
+        private readonly DataContext _context;
+
+        public ContentRepository(DataContext context)
+        {
+            _context = context;
+        }
         public void Add(MessageModel entity)
         {
-            throw new NotImplementedException();
+            _context.MessageModel.Add(entity);
         }
 
         public void Add(CommentModel entity)
         {
-            throw new NotImplementedException();
+            _context.CommentModel.Add(entity);
         }
 
         public void AddRange(IEnumerable<MessageModel> entities)
@@ -48,14 +56,14 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<CommentModel> GetCommentAsync(int commentId)
+        public async Task<CommentModel> GetCommentAsync(int commentId)
         {
-            throw new NotImplementedException();
+            return await _context.CommentModel.FirstOrDefaultAsync(c => c.CommentId == commentId);
         }
 
-        public Task<MessageModel> GetMessageAsync(int messageId)
+        public async Task<MessageModel> GetMessageAsync(int messageId)
         {
-            throw new NotImplementedException();
+            return await _context.MessageModel.FirstOrDefaultAsync(m => m.MessageId == messageId);
         }
 
         public Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId)
