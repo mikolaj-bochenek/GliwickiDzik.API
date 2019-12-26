@@ -79,12 +79,12 @@ namespace GliwickiDzik.API.Data
 
         public void Remove(MessageModel entity)
         {
-            throw new NotImplementedException();
+            _context.MessageModel.Remove(entity);
         }
 
         public void Remove(CommentModel entity)
         {
-            throw new NotImplementedException();
+            _context.CommentModel.Remove(entity);
         }
 
         public void RemoveRange(IEnumerable<MessageModel> entities)

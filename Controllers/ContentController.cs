@@ -81,7 +81,49 @@ namespace GliwickiDzik.API.Controllers
             
             //return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, messageToReturn);
             return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, createdMessage);
+        }
+        [HttpDelete("DeleteMessage/{messageId}")]
+        public async Task<IActionResult> RemoveMessageAsync(int userId, int messageId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var message = await _repository.GetMessageAsync(messageId);
 
+            if (message == null)
+                BadRequest("Error: The message cannot be found!");
+
+            if (message.SenderId == userId)
+                message.SenderDeleted = true;
+            if (message.RecipientId == userId)
+                message.RecipientDeleted = true;
+            
+            if (message.SenderDeleted == true && message.RecipientDeleted == true)
+                _repository.Remove(message);
+            
+            if (!await _repository.SaveContentAsync())
+                throw new Exception("Error occuerd while trying to save changes in database");
+            
+            return NoContent();
+        }
+        [HttpPost("{messageId}/IsRead")]
+        public async Task<IActionResult> SetMessageIsReadAsync(int userId, int messageId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var message = await _repository.GetMessageAsync(messageId);
+
+            if (message.RecipientId != userId)
+                return Unauthorized();
+            
+            message.IsRead = true;
+            message.DateOfRead = DateTime.Now;
+
+            if (!await _repository.SaveContentAsync())
+                throw new Exception("Error uccured while trying to save changes in database");
+            
+            return NoContent();
         }
     }
 }
