@@ -14,8 +14,8 @@ namespace GliwickiDzik.API.Models
         public UserModel Recipient { get; set; }
         public string Content { get; set; }
         public bool IsRead { get; set; }
-        public DateTime? DataRead { get; set; }
-        public DateTime DateSent { get; set; }
+        public DateTime? DateOfRead { get; set; }
+        public DateTime DateOfSent { get; set; }
         public bool SenderDeleted { get; set; }
         public bool RecipientDeleted { get; set; }
     }

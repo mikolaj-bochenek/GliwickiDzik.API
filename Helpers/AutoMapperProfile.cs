@@ -29,6 +29,8 @@ namespace GliwickiDzik.API.Helpers
             
             CreateMap<TrainingModel, TrainingForReturnDTO>();
 
+            CreateMap<MessageForCreateDTO, MessageModel>().ReverseMap();
+
         }
     }
 }
