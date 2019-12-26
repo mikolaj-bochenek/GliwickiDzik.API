@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
 namespace GliwickiDzik.API.Models
 {
     public class ExerciseForTrainingModel
     {
+        [Key]
         public int ExerciseForTrainingId { get; set; }
         public string Name { get; set; }
         public int Sets { get; set; }

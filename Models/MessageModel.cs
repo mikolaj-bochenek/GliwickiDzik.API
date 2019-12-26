@@ -1,10 +1,12 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using GliwickiDzik.Models;
 
 namespace GliwickiDzik.API.Models
 {
     public class MessageModel
     {
+        [Key]
         public int MessageId { get; set; }
         public int SenderId { get; set; }
         public UserModel Sender { get; set; }

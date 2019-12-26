@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System;
 using GliwickiDzik.API.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace GliwickiDzik.Models
 {
     public class UserModel
     {
+        [Key]
         public int UserId { get; set; }
 
         //For Register

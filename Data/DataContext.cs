@@ -16,6 +16,30 @@ namespace GliwickiDzik.Data
         public DbSet<MessageModel> MessageModel { get; set; }
         public DbSet<TrainingPlanModel> TrainingPlanModel { get; set; }
         public DbSet<TrainingModel> TrainingModel { get; set; }
+        public DbSet<LikeModel> LikeModel { get; set; }
+
+         protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<LikeModel>().HasKey(k => new { k.UserIdLikesPlanId, k.PlanIdIsLikedByUserId});
+
+            builder.Entity<LikeModel>().HasOne(u => u.PlanIsLiked);
+                                  //.WithMany(u => u.UserLikes)
+                                  //.HasForeignKey(u => u.UserIsLikesId)
+                                  //.OnDelete(DeleteBehavior.Restrict);
+                        
+            builder.Entity<LikeModel>().HasOne(u => u.UserLikes);
+                                  //.WithMany(u => u.PlanIsLiked)
+                                  //.HasForeignKey(u => u.UserLikesId)
+                                  //.OnDelete(DeleteBehavior.Restrict);
+            
+            builder.Entity<MessageModel>().HasOne(u => u.Sender)
+                                     .WithMany(m => m.MessagesSent)
+                                     .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<MessageModel>().HasOne(u => u.Recipient)
+                                     .WithMany(m => m.MessagesReceived)
+                                     .OnDelete(DeleteBehavior.Restrict);
+        }
 
     }
 }
