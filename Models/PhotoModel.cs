@@ -5,7 +5,7 @@ namespace GliwickiDzik.API.Models
 {
     public class PhotoModel
     {
-        public int Id { get; set; }
+        public int PhotoId { get; set; }
         public string Url { get; set; }
         public string Description { get; set; }
         public DateTime DateOfAdded { get; set; }

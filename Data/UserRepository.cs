@@ -38,7 +38,7 @@ namespace GliwickiDzik.API.Data
 
         public async Task<UserModel> GetUserByIdAsync(int id)
         {
-            return await _context.UserModel.FirstOrDefaultAsync(u => u.Id == id);
+            return await _context.UserModel.FirstOrDefaultAsync(u => u.UserId == id);
         }
 
         public void Remove(UserModel entity)

@@ -6,7 +6,7 @@ namespace GliwickiDzik.Models
 {
     public class UserModel
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
 
         //For Register
         public string Username { get; set; }
@@ -26,6 +26,8 @@ namespace GliwickiDzik.Models
         public string Description { get; set; }
         public float BicepsSize { get; set; }
         public ICollection<PhotoModel> Photos { get; set; }
-        public ICollection<TrainingPlanModel> Plans  { get; set; }
+        public ICollection<TrainingPlanModel> TrainingPlans { get; set; }
+        public ICollection<MessageModel> MessagesSent { get; set; }
+        public ICollection<MessageModel> MessagesReceived { get; set; }
     }
 }

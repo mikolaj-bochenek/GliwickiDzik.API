@@ -45,7 +45,7 @@ namespace GliwickiDzik.Controllers
 
             var userToUse = _mapper.Map<UserForUseDTO>(createdUser);
 
-            return CreatedAtRoute("GetUser", new { controller = "User", Id = createdUser.Id }, userToUse );
+            return CreatedAtRoute("GetUser", new { controller = "User", Id = createdUser.UserId }, userToUse );
         }
 
         // http:localhost/api/auth/login
@@ -59,7 +59,7 @@ namespace GliwickiDzik.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userToLogin.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, userToLogin.UserId.ToString()),
                 new Claim(ClaimTypes.Name, userToLogin.Username)
             };
 

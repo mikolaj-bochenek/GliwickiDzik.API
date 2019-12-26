@@ -62,38 +62,44 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync(int trainingId)
+        public async Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync()
         {
-            
-            return await _context.ExerciseForTrainingModel.Where(t => t.TrainingId == trainingId).ToListAsync();
+            var exercises = await _context.ExerciseForTrainingModel.ToListAsync();
+            exercises.OrderByDescending(e => e.ExerciseForTrainingId);
+
+            return exercises;
         }
+
         public async Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansAsync()
         {
-            var trainingPlans = await _context.TrainingPlanModel.Include(p => p.Trening).ToListAsync();
-            trainingPlans.OrderByDescending(p => p.DateOfAdded);
+            var trainingPlans = await _context.TrainingPlanModel.Include(p => p.Trainings).ToListAsync();
+            trainingPlans.OrderByDescending(p => p.DateOfCreated);
 
             return trainingPlans;
         }
 
-        public Task<IEnumerable<TrainingPlanModel>> GetAllTrainingsAsync()
+        public async Task<IEnumerable<TrainingModel>> GetAllTrainingsAsync()
         {
-            throw new NotImplementedException();
+            var trainings = await _context.TrainingModel.Include(e => e.ExercisesForTraining).ToListAsync();
+            trainings.OrderByDescending(e => e.Day);
+
+            return trainings;
         }
 
-        public Task<ExerciseForTrainingModel> GetExerciseForTrainingAsync(int id)
+        public async Task<ExerciseForTrainingModel> GetExerciseForTrainingAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.ExerciseForTrainingModel.FirstOrDefaultAsync(e => e.ExerciseForTrainingId == id);
         }
 
         public async Task<TrainingModel> GetTrainingAsync(int id)
         {
-            return await _context.TrainingModel.FirstOrDefaultAsync(t => t.Id == id);
+            return await _context.TrainingModel.FirstOrDefaultAsync(t => t.TrainingId == id);
         }
 
         public async Task<TrainingPlanModel> GetTrainingPlanAsync(int id)
         {
-            return await _context.TrainingPlanModel.Include(t => t.Trening)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.TrainingPlanModel.Include(t => t.Trainings)
+                .FirstOrDefaultAsync(p => p.TrainingPlanId == id);
         }
 
         public void Remove(TrainingPlanModel entity)

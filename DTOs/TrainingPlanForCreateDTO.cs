@@ -6,12 +6,16 @@ namespace GliwickiDzik.API.DTOs
     {
         public TrainingPlanForCreateDTO()
         {
-            DateOfAdded = DateTime.Now;
+            DateOfCreated = DateTime.Now;
+            LikeCounter = 0;
+            CommentCounter = 0;
         }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime DateOfAdded { get; set; }
+        public DateTime DateOfCreated { get; set; }
         public string Level { get; set; }
         public bool IsMain { get; set; }
+        public int LikeCounter { get; set; }
+        public int CommentCounter { get; set; }
     }
 }

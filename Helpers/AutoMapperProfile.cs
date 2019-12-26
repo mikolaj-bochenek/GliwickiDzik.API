@@ -16,14 +16,17 @@ namespace GliwickiDzik.API.Helpers
             CreateMap<UserModel, UserForUseDTO>();
 
             CreateMap<ExerciseForTrainingForCreateDTO, ExerciseForTrainingModel>();
-            CreateMap<ExerciseForTrainingModel, ExerciseForTrainingForEditDTO>();
+            CreateMap<ExerciseForTrainingForEditDTO, ExerciseForTrainingModel >();
+            CreateMap<ExerciseForTrainingModel, ExerciseForTrainingForReturnDTO>();
 
             CreateMap<TrainingPlanForCreateDTO, TrainingPlanModel>();
 
             CreateMap<TrainingForCreateDTO, TrainingModel>();
+            CreateMap<TrainingForEditDTO, TrainingModel>();
 
             CreateMap<TrainingPlanModel, TrainingPlanForReturnDTO>();
-            //CreateMap<TrainingPlansForReturnDTO, TrainingPlanModel>();
+            CreateMap<TrainingPlanForEditDTO, TrainingPlanModel>();
+            
             CreateMap<TrainingModel, TrainingForReturnDTO>();
 
         }
