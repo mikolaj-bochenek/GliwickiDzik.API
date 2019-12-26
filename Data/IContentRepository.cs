@@ -9,6 +9,7 @@ namespace GliwickiDzik.API.Data
     {
          Task<MessageModel> GetMessageAsync(int messageId);
          Task<IEnumerable<MessageModel>> GetAllMessagesAsync();
+         Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId);
          Task<CommentModel> GetCommentAsync(int commentId);
          Task<IEnumerable<CommentModel>> GetAllCommentsAsync();
          Task<bool> SaveContentAsync();
