@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GliwickiDzik.API.Helpers;
 using GliwickiDzik.Models;
 
 namespace GliwickiDzik.API.Data
@@ -8,6 +9,6 @@ namespace GliwickiDzik.API.Data
     {
          Task<UserModel> GetUserByIdAsync(int id);
          Task<IEnumerable<UserModel>> GetAllUsersAsync();
-         Task<IEnumerable<UserModel>> GetUsersForRecords();
+         Task<PagedList<UserModel>> GetUsersForRecords(UserParams userParams);
     }
 }

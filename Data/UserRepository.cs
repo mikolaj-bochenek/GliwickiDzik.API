@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GliwickiDzik.API.Helpers;
 using GliwickiDzik.Data;
 using GliwickiDzik.Models;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,10 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<UserModel>> GetUsersForRecords()
+        public async Task<PagedList<UserModel>> GetUsersForRecords(UserParams userParams)
         {
-            return await _context.UserModel.OrderByDescending(u => u.BicepsSize).ToListAsync();
+            var users = _context.UserModel.OrderByDescending(u => u.BicepsSize);
+            return await PagedList<UserModel>.CreateListAsync(users, userParams.PageSize, userParams.PageNumber);
         }
         public async Task<UserModel> GetUserByIdAsync(int id)
         {

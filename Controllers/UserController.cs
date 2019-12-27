@@ -42,14 +42,16 @@ namespace GliwickiDzik.Controllers
             return Ok(userToReturn);
         }
         [HttpGet("GetUsers")]
-        public async Task<IActionResult> GetUsersForRecordsAsync()
+        public async Task<IActionResult> GetUsersForRecordsAsync([FromQuery]UserParams userParams)
         {
-            var usersToList = await _repository.GetUsersForRecords();
+            var usersToList = await _repository.GetUsersForRecords(userParams);
 
             if (usersToList == null)
                 return BadRequest("Users cannot be found!");
             
             var listedUsers = _mapper.Map<IEnumerable<UserForRecordsDTO>>(usersToList);
+
+            Response.AddPagination(usersToList.CurrentPage, usersToList.PageSize, usersToList.TotalCount, usersToList.TotalPages);
 
             return Ok(listedUsers);
         }
