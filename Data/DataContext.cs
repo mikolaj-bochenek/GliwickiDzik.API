@@ -20,25 +20,25 @@ namespace GliwickiDzik.Data
 
          protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<LikeModel>().HasKey(k => new { k.UserIdLikesPlanId, k.PlanIdIsLikedByUserId});
+            builder.Entity<LikeModel>().HasKey(k => new { k.UserIdLikesPlanId, k.PlanIdIsLikedByUserId });
 
-            builder.Entity<LikeModel>().HasOne(u => u.PlanIsLiked);
-                                  //.WithMany(u => u.UserLikes)
-                                  //.HasForeignKey(u => u.UserIsLikesId)
-                                  //.OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<LikeModel>().HasOne(u => u.PlanIsLiked)
+                                    .WithMany(u => u.UserLikes)
+                                    .HasForeignKey(u => u.PlanIdIsLikedByUserId)
+                                    .OnDelete(DeleteBehavior.Restrict);
                         
-            builder.Entity<LikeModel>().HasOne(u => u.UserLikes);
-                                  //.WithMany(u => u.PlanIsLiked)
-                                  //.HasForeignKey(u => u.UserLikesId)
-                                  //.OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<LikeModel>().HasOne(u => u.UserLikes)
+                                    .WithMany(u => u.PlanIsLiked)
+                                    .HasForeignKey(u => u.UserIdLikesPlanId)
+                                    .OnDelete(DeleteBehavior.Restrict);
             
             builder.Entity<MessageModel>().HasOne(u => u.Sender)
-                                     .WithMany(m => m.MessagesSent)
-                                     .OnDelete(DeleteBehavior.Restrict);
+                                    .WithMany(m => m.MessagesSent)
+                                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<MessageModel>().HasOne(u => u.Recipient)
-                                     .WithMany(m => m.MessagesReceived)
-                                     .OnDelete(DeleteBehavior.Restrict);
+                                    .WithMany(m => m.MessagesReceived)
+                                    .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

@@ -31,5 +31,7 @@ namespace GliwickiDzik.Models
         public ICollection<TrainingPlanModel> TrainingPlans { get; set; }
         public ICollection<MessageModel> MessagesSent { get; set; }
         public ICollection<MessageModel> MessagesReceived { get; set; }
+        public ICollection<LikeModel> UserLikes { get; set; }
+        public ICollection<LikeModel> PlanIsLiked { get; set; }
     }
 }

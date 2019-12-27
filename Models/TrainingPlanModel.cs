@@ -21,6 +21,7 @@ namespace GliwickiDzik.API.Models
         public int CommentCounter { get; set; }
         public ICollection<CommentModel> Comments { get; set; }
         public ICollection<TrainingModel> Trainings { get; set; }
-        public ICollection<LikeModel> Likes { get; set; }
+        public ICollection<LikeModel> PlanIsLiked { get; set; }
+        public ICollection<LikeModel> UserLikes { get; set; }
     }
 }
