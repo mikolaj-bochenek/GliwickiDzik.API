@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GliwickiDzik.API.Controllers
 {
     //http://localhost:5000/api/users/userid/content
-    [Route("api/users/{userId}/[controller]")]
+    [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]
     public class ContentController : ControllerBase
@@ -27,6 +27,9 @@ namespace GliwickiDzik.API.Controllers
             _userRepository = userRepository;
             _mapper = mapper;
         }
+
+        #region = "MESSAGES"
+
         [HttpGet("GetMessage/{messageId}", Name="GetMessage")]
         public async Task<IActionResult> GetMessageAsync(int userId, int messageId)
         {
@@ -42,6 +45,7 @@ namespace GliwickiDzik.API.Controllers
 
             return Ok(messageToReturn);
         }
+        
         [HttpGet("GetMessageThread/{recipientId}")]
         public async Task<IActionResult> GetMessageThreadAsync(int userId, int recipientId)
         {
@@ -57,6 +61,7 @@ namespace GliwickiDzik.API.Controllers
 
             return Ok(messageThread);
         }
+        
         [HttpPost("AddMessage")]
         public async Task<IActionResult> CreateMessageAsync(int userId, MessageForCreateDTO messageForCreateDTO)
         {
@@ -82,6 +87,7 @@ namespace GliwickiDzik.API.Controllers
             //return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, messageToReturn);
             return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, createdMessage);
         }
+        
         [HttpDelete("DeleteMessage/{messageId}")]
         public async Task<IActionResult> RemoveMessageAsync(int userId, int messageId)
         {
@@ -106,6 +112,7 @@ namespace GliwickiDzik.API.Controllers
             
             return NoContent();
         }
+        
         [HttpPost("{messageId}/IsRead")]
         public async Task<IActionResult> SetMessageIsReadAsync(int userId, int messageId)
         {
@@ -125,5 +132,94 @@ namespace GliwickiDzik.API.Controllers
             
             return NoContent();
         }
+    
+        #endregion
+
+        #region = "COMMENTS"
+
+        [HttpGet("GetComment/{commentId}")]
+        public async Task<IActionResult> GetCommentAsync(int commentId)
+        {
+            var comment = await _repository.GetCommentAsync(commentId);
+
+            if (comment == null)
+                return BadRequest("Comment cannot be found!");
+            
+            var commentToReturn = _mapper.Map<CommentForReturnDTO>(comment);
+
+            return Ok(commentToReturn);
+        }
+
+        [HttpGet("GetComments/{planId}")]
+        public async Task<IActionResult> GetCommentsForTrainingPlanAsync(int planId)
+        {
+            var comments = await _repository.GetAllCommentsAsync(planId);
+
+            if (comments == null)
+                return BadRequest("Comments cannot be found!");
+            
+            var commentsToReturn = _mapper.Map<IEnumerable<CommentForReturnDTO>>(comments);
+
+            return Ok(commentsToReturn);
+        }
+
+        [HttpPost("AddComment/{planId}")]
+        public async Task<IActionResult> CreateCommentAsync(int userId, int trainingPlanId, CommentForCreateDTO commentForCreateDTO)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var comment = _mapper.Map<CommentModel>(commentForCreateDTO);
+            comment.CommenterId = userId;
+            comment.TrainingPlanId = trainingPlanId;
+
+            _repository.Add(comment);
+
+            if (!await _repository.SaveContentAsync())
+                throw new Exception("Error occurred while trying save changes to database!!");
+            
+            return NoContent();
+        }
+
+        [HttpPut("EditComment/{commentId}")]
+        public async Task<IActionResult> EditCommentAsync(int userId, int commentId, CommentForEditDTO commentForEditDTO)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var commentToEdit = await _repository.GetCommentAsync(commentId);
+
+            if ( commentToEdit == null)
+                return BadRequest("The comment cannot be found!");
+            
+            var editedComment = _mapper.Map(commentToEdit, commentForEditDTO);
+
+            if (!await _repository.SaveContentAsync())
+                throw new Exception("Error occurred while trying save changes to database!");
+            
+            return NoContent();
+        }
+
+        [HttpDelete("DeleteComment/{commentId}")]
+        public async Task<IActionResult> RemoveCommentAsync(int userId, int commentId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var commentToDelete = await _repository.GetCommentAsync(commentId);
+
+            if (commentToDelete == null)
+                return BadRequest("The comment cannnot be found!");
+            
+            if (userId != commentToDelete.CommenterId)
+                return BadRequest("You are not allowed to remove this comment!");
+            _repository.Remove(commentToDelete);
+
+            if (await _repository.SaveContentAsync())
+                return NoContent();
+
+            throw new Exception("Error occurred while trying save changes to database!");   
+        }
+        #endregion
     }
 }

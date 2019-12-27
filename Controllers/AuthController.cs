@@ -43,7 +43,7 @@ namespace GliwickiDzik.Controllers
             
             var createdUser = await _repository.Register(userToCreate, userForRegisterDTO.Password);
 
-            var userToUse = _mapper.Map<UserForUseDTO>(createdUser);
+            var userToUse = _mapper.Map<UserForReturnDTO>(createdUser);
 
             return CreatedAtRoute("GetUser", new { controller = "User", Id = createdUser.UserId }, userToUse );
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GliwickiDzik.Data;
@@ -36,6 +37,10 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
+        public async Task<IEnumerable<UserModel>> GetUsersForRecords()
+        {
+            return await _context.UserModel.OrderByDescending(u => u.BicepsSize).ToListAsync();
+        }
         public async Task<UserModel> GetUserByIdAsync(int id)
         {
             return await _context.UserModel.FirstOrDefaultAsync(u => u.UserId == id);

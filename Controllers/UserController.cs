@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GliwickiDzik.Controllers
 {
-    //http:localhost:5000/api/user
+    //http://localhost:5000/api/user
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -27,21 +27,33 @@ namespace GliwickiDzik.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id}", Name = "GetUser")]
+        [HttpGet("GetUser/{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
             var userForGet = await _repository.GetUserByIdAsync(id);
 
             if (userForGet == null)
-                return BadRequest("User doesn't exist!");
+                return BadRequest("The user cannot be found!");
 
-            var userToReturn = _mapper.Map<UserForUseDTO>(userForGet);
+            var userToReturn = _mapper.Map<UserForReturnDTO>(userForGet);
 
             return Ok(userToReturn);
         }
+        [HttpGet("GetUsers")]
+        public async Task<IActionResult> GetUsersForRecordsAsync()
+        {
+            var usersToList = await _repository.GetUsersForRecords();
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> EditUser(int id, UserForEditDTO userForEditDTO)
+            if (usersToList == null)
+                return BadRequest("Users cannot be found!");
+            
+            var listedUsers = _mapper.Map<IEnumerable<UserForRecordsDTO>>(usersToList);
+
+            return Ok(listedUsers);
+        }
+
+        [HttpPut("EditUser/{id}")]
+        public async Task<IActionResult> EditUserAsync(int id, UserForEditDTO userForEditDTO)
         {
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -56,8 +68,8 @@ namespace GliwickiDzik.Controllers
             throw new Exception("Error occured while trying to save in database");
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpDelete("DeleteUser/{id}")]
+        public async Task<IActionResult> RemoveUserAsync(int id)
         {
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();

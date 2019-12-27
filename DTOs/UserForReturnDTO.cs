@@ -2,11 +2,12 @@ using System;
 
 namespace GliwickiDzik.API.DTOs
 {
-    public class UserForUseDTO
+    public class UserForReturnDTO
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
         public string Username { get; set; }
         public string Gender { get; set; }
+        public int Age { get; set; }
         public DateTime DateOfCreated { get; set; }
         public DateTime LastActive { get; set; }
         public string City { get; set; }

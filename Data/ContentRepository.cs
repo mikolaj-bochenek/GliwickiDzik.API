@@ -47,9 +47,12 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CommentModel>> GetAllCommentsAsync()
+        public async Task<IEnumerable<CommentModel>> GetAllCommentsAsync(int trainingPlanId)
         {
-            throw new NotImplementedException();
+            return await _context.CommentModel
+                            .Where(c => c.TrainingPlanId == trainingPlanId)
+                            .OrderByDescending(c => c.LikeCounter)
+                            .ToListAsync();                                   
         }
 
         public Task<IEnumerable<MessageModel>> GetAllMessagesAsync()

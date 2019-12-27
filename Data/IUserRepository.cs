@@ -8,5 +8,6 @@ namespace GliwickiDzik.API.Data
     {
          Task<UserModel> GetUserByIdAsync(int id);
          Task<IEnumerable<UserModel>> GetAllUsersAsync();
+         Task<IEnumerable<UserModel>> GetUsersForRecords();
     }
 }
