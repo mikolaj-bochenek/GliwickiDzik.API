@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GliwickiDzik.API.Helpers;
 using GliwickiDzik.API.Models;
 
 namespace GliwickiDzik.API.Data
@@ -11,7 +12,7 @@ namespace GliwickiDzik.API.Data
          Task<IEnumerable<MessageModel>> GetAllMessagesAsync();
          Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId);
          Task<CommentModel> GetCommentAsync(int commentId);
-         Task<IEnumerable<CommentModel>> GetAllCommentsAsync(int trainingPlanId);
+         Task<PagedList<CommentModel>> GetAllCommentsAsync(int trainingPlanId, CommentParams commentParams);
          Task<bool> SaveContentAsync();
     }
 }

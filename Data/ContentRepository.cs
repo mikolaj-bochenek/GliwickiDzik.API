@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GliwickiDzik.API.Helpers;
 using GliwickiDzik.API.Models;
 using GliwickiDzik.Data;
 using Microsoft.EntityFrameworkCore;
@@ -47,12 +48,30 @@ namespace GliwickiDzik.API.Data
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<CommentModel>> GetAllCommentsAsync(int trainingPlanId)
+        public async Task<PagedList<CommentModel>> GetAllCommentsAsync(int trainingPlanId, CommentParams commentParams)
         {
-            return await _context.CommentModel
+            var comments = _context.CommentModel
                             .Where(c => c.TrainingPlanId == trainingPlanId)
-                            .OrderByDescending(c => c.LikeCounter)
-                            .ToListAsync();                                   
+                            .OrderByDescending(c => c.LikeCounter);  
+
+            if(!string.IsNullOrEmpty(commentParams.OrderBy))
+            {
+                switch(commentParams.OrderBy)
+                {
+                    case "Newest":
+                        comments = comments.OrderByDescending(c => c.DateOfCreated);
+                        break;
+
+                    case "Oldest":
+                        comments = comments.OrderBy(c => c.DateOfCreated);
+                        break;
+                        
+                    default:
+                        comments = comments.OrderByDescending(c => c.LikeCounter);
+                        break;
+                }
+            }
+            return await PagedList<CommentModel>.CreateListAsync(comments, commentParams.PageSize, commentParams.PageNumber);                               
         }
 
         public Task<IEnumerable<MessageModel>> GetAllMessagesAsync()

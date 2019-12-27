@@ -152,15 +152,17 @@ namespace GliwickiDzik.API.Controllers
             return Ok(commentToReturn);
         }
 
-        [HttpGet("GetComments/{planId}")]
-        public async Task<IActionResult> GetCommentsForTrainingPlanAsync(int planId)
+        [HttpGet("GetComments/{trainingPlanId}")]
+        public async Task<IActionResult> GetCommentsForTrainingPlanAsync(int trainingPlanId, [FromQuery]CommentParams commentParams)
         {
-            var comments = await _repository.GetAllCommentsAsync(planId);
+            var commentsToList = await _repository.GetAllCommentsAsync(trainingPlanId, commentParams);
 
-            if (comments == null)
+            if (commentsToList == null)
                 return BadRequest("Comments cannot be found!");
             
-            var commentsToReturn = _mapper.Map<IEnumerable<CommentForReturnDTO>>(comments);
+            var commentsToReturn = _mapper.Map<IEnumerable<CommentForReturnDTO>>(commentsToList);
+
+            Response.AddPagination(commentsToList.CurrentPage, commentsToList.PageSize, commentsToList.TotalCount, commentsToList.TotalPages);
 
             return Ok(commentsToReturn);
         }
