@@ -41,6 +41,24 @@ namespace GliwickiDzik.API.Data
         public async Task<PagedList<UserModel>> GetUsersForRecords(UserParams userParams)
         {
             var users = _context.UserModel.OrderByDescending(u => u.BicepsSize);
+
+            if(!string.IsNullOrEmpty(userParams.OrderBy))
+            {
+                switch(userParams.OrderBy)
+                {
+                    case "LastActive":
+                        users = users.OrderByDescending(u => u.LastActive);
+                        break;
+
+                    case "LastCreated":
+                        users = users.OrderByDescending(u => u.DateOfCreated);
+                        break;
+                        
+                    default:
+                        users = users.OrderByDescending(u => u.BicepsSize);
+                        break;
+                }
+            }
             return await PagedList<UserModel>.CreateListAsync(users, userParams.PageSize, userParams.PageNumber);
         }
         public async Task<UserModel> GetUserByIdAsync(int id)

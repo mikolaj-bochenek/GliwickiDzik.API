@@ -1,3 +1,5 @@
+using System;
+
 namespace GliwickiDzik.API.Helpers
 {
     public class UserParams
@@ -10,6 +12,6 @@ namespace GliwickiDzik.API.Helpers
             get { return _pageSize = 24; }
             set { _pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
-        
+        public string OrderBy { get; set; }
     }
 }
