@@ -44,6 +44,7 @@ namespace GliwickiDzik.Controllers
 
             return Ok(userToReturn);
         }
+        
         [HttpGet("GetUsers")]
         public async Task<IActionResult> GetUsersForRecordsAsync([FromQuery]UserParams userParams)
         {
@@ -112,12 +113,15 @@ namespace GliwickiDzik.Controllers
             };
 
             _repository.Add(like);
-            
-            if (await _repository.SaveAllUsers())
+
+            trainingPlanToLike.LikeCounter++;
+
+            if (await _trainingRepository.SaveAllTrainings() && await _repository.SaveAllUsers())
                 return NoContent();
-            
+
             throw new Exception("Errorc occured while trying save changes to database!");
         }
+
         [HttpPost("Dislike/{userId}/Dislike/{trainingPlanId}")]
         public async Task<IActionResult> DislikeUserAsync(int userId, int trainingPlanId)
         {
@@ -136,10 +140,12 @@ namespace GliwickiDzik.Controllers
 
             _repository.Remove(likeToRemove);
 
-            if (await _repository.SaveAllUsers())
+            trainingPlanToDislike.LikeCounter--;
+
+            if (await _trainingRepository.SaveAllTrainings() && await _repository.SaveAllUsers())
                 return NoContent();
-            
-            throw new Exception("Error occured while trying save changes to database!");
+                
+            throw new Exception("Errorc occured while trying save changes to database!");
         }
     }
 }

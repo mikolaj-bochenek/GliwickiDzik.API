@@ -51,6 +51,7 @@ namespace GliwickiDzik
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITrainingRepository, TrainingRepository>();
+            services.AddScoped<IContentRepository, ContentRepository>();
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
