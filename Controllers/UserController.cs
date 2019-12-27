@@ -10,6 +10,7 @@ using AutoMapper;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using GliwickiDzik.API.Helpers;
+using GliwickiDzik.API.Models;
 
 namespace GliwickiDzik.Controllers
 {
@@ -21,11 +22,13 @@ namespace GliwickiDzik.Controllers
     public class UserController: ControllerBase
     {
         private readonly IUserRepository _repository;
+        private readonly ITrainingRepository _trainingRepository;
         private readonly IMapper _mapper;
 
-        public UserController(IUserRepository repository, IMapper mapper)
+        public UserController(IUserRepository repository, ITrainingRepository trainingRepository, IMapper mapper)
         {
             _repository = repository;
+            _trainingRepository = trainingRepository;
             _mapper = mapper;
         }
 
@@ -66,7 +69,7 @@ namespace GliwickiDzik.Controllers
 
             _mapper.Map(userForEditDTO, userForEdit);
 
-            if (await _repository.SaveAllAsync())
+            if (await _repository.SaveAllUsers())
                 return NoContent();
             
             throw new Exception("Error occured while trying to save in database");
@@ -82,10 +85,61 @@ namespace GliwickiDzik.Controllers
             
             _repository.Remove(userToDelete);
 
-            if (await _repository.SaveAllAsync())
+            if (await _repository.SaveAllUsers())
                 return NoContent();
             
             throw new Exception("Error occured while trying to save in database");
+        }
+
+        [HttpPost("AddLike/{userId}/Like/{trainingPlanId}")]
+        public async Task<IActionResult> CreateLikeAsync(int userId, int trainingPlanId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            if (await _repository.IsLikedAsync(userId, trainingPlanId))
+                return BadRequest("You already likes this training plan!");
+            
+            var trainingPlanToLike = await _trainingRepository.GetTrainingPlanAsync(trainingPlanId);
+
+            if (trainingPlanToLike == null)
+                return BadRequest("The trainingPlan cannot be found!");
+            
+            var like = new LikeModel
+            {
+                UserIdLikesPlanId = userId,
+                PlanIdIsLikedByUserId = trainingPlanId
+            };
+
+            _repository.Add(like);
+            
+            if (await _repository.SaveAllUsers())
+                return NoContent();
+            
+            throw new Exception("Errorc occured while trying save changes to database!");
+        }
+        [HttpPost("Dislike/{userId}/Dislike/{trainingPlanId}")]
+        public async Task<IActionResult> DislikeUserAsync(int userId, int trainingPlanId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            if (!await _repository.IsLikedAsync(userId, trainingPlanId))
+                return BadRequest("You have to first liked this training plan!");
+
+            var trainingPlanToDislike = await _trainingRepository.GetTrainingPlanAsync(trainingPlanId);
+
+            if (trainingPlanToDislike == null)
+                return BadRequest("The trainingPlan cannot be found!");
+
+            var likeToRemove = await _repository.GetLikeAsync(userId, trainingPlanId);
+
+            _repository.Remove(likeToRemove);
+
+            if (await _repository.SaveAllUsers())
+                return NoContent();
+            
+            throw new Exception("Error occured while trying save changes to database!");
         }
     }
 }

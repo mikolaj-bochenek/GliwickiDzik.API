@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GliwickiDzik.API.Helpers;
+using GliwickiDzik.API.Models;
 using GliwickiDzik.Data;
 using GliwickiDzik.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +22,7 @@ namespace GliwickiDzik.API.Data
         }
         public void Add(UserModel entity)
         {
-            throw new NotImplementedException();
+            _context.UserModel.Add(entity);
         }
 
         public void AddRange(IEnumerable<UserModel> entities)
@@ -70,6 +72,10 @@ namespace GliwickiDzik.API.Data
         {
             _context.UserModel.Remove(entity);
         }
+        public void Remove(LikeModel entity)
+        {
+            _context.LikeModel.Remove(entity);
+        }
 
         public void RemoveRange(IEnumerable<UserModel> entities)
         {
@@ -79,6 +85,47 @@ namespace GliwickiDzik.API.Data
         public async Task<bool> SaveAllAsync()
         {
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> IsLikedAsync(int userId, int trainingPlanId)
+        {
+            var isLike = await _context.LikeModel.FirstOrDefaultAsync(u => u.UserIdLikesPlanId == userId && u.PlanIdIsLikedByUserId == trainingPlanId);
+            
+            if (isLike != null)
+                return true;
+            
+            return false;
+        }
+        public async Task<bool> SaveAllUsers()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public Task<IEnumerable<LikeModel>> FindAsync(Expression<Func<LikeModel, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Add(LikeModel entity)
+        {
+            _context.LikeModel.Add(entity);
+        }
+
+        public void AddRange(IEnumerable<LikeModel> entities)
+        {
+            throw new NotImplementedException();
+        }
+
+        
+
+        public void RemoveRange(IEnumerable<LikeModel> entities)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async  Task<LikeModel> GetLikeAsync(int userId, int trainingPlanId)
+        {
+            return await _context.LikeModel.FirstOrDefaultAsync(l => l.UserIdLikesPlanId == userId && l.PlanIdIsLikedByUserId == trainingPlanId);
         }
     }
 }

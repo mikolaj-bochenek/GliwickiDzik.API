@@ -22,7 +22,7 @@ namespace GliwickiDzik.API.Helpers
 
             user.LastActive = DateTime.Now;
 
-            await repository.SaveAllAsync();
+            await repository.SaveAllUsers();
         }
     }
 }
