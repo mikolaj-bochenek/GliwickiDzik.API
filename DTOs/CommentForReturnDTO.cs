@@ -10,7 +10,6 @@ namespace GliwickiDzik.API.DTOs
         public UserModel Commenter { get; set; }
         public string Content { get; set; }
         public DateTime DateOfCreated { get; set; }
-        public bool CommentDeleted { get; set; }
-        public int LikeCounter { get; set; }
+        public int VoteCounter { get; set; }
     }
 }

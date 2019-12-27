@@ -52,7 +52,7 @@ namespace GliwickiDzik.API.Data
         {
             var comments = _context.CommentModel
                             .Where(c => c.TrainingPlanId == trainingPlanId)
-                            .OrderByDescending(c => c.LikeCounter);  
+                            .OrderByDescending(c => c.VoteCounter);  
 
             if(!string.IsNullOrEmpty(commentParams.OrderBy))
             {
@@ -67,7 +67,7 @@ namespace GliwickiDzik.API.Data
                         break;
                         
                     default:
-                        comments = comments.OrderByDescending(c => c.LikeCounter);
+                        comments = comments.OrderByDescending(c => c.VoteCounter);
                         break;
                 }
             }
