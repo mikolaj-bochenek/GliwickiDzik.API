@@ -8,6 +8,7 @@ using GliwickiDzik.API.DTOs;
 using GliwickiDzik.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using GliwickiDzik.API.Helpers;
 
 namespace GliwickiDzik.API.Controllers
 {
@@ -15,6 +16,7 @@ namespace GliwickiDzik.API.Controllers
     [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]
+    [ServiceFilter(typeof(ActionFilter))]
     public class ContentController : ControllerBase
     {
         private readonly IContentRepository _repository;

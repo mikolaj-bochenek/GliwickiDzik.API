@@ -9,6 +9,7 @@ using GliwickiDzik.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using GliwickiDzik.API.Helpers;
 
 namespace GliwickiDzik.API.Controllers
 {
@@ -16,6 +17,7 @@ namespace GliwickiDzik.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [ServiceFilter(typeof(ActionFilter))]
     public class TrainingController : ControllerBase
     {
         private readonly ITrainingRepository _repository;

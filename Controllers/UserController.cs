@@ -9,6 +9,7 @@ using GliwickiDzik.API.Data;
 using AutoMapper;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using GliwickiDzik.API.Helpers;
 
 namespace GliwickiDzik.Controllers
 {
@@ -16,6 +17,7 @@ namespace GliwickiDzik.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [ServiceFilter(typeof(ActionFilter))]
     public class UserController: ControllerBase
     {
         private readonly IUserRepository _repository;
