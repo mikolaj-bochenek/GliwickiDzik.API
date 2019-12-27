@@ -6,7 +6,7 @@ namespace GliwickiDzik.API.DTOs
 {
     public class TrainingPlanForReturnDTO
     {
-        public int TrainingPlanModelId { get; set; }
+        public int TrainingPlanId { get; set; }
         public int UserId { get; set; }
         public string Owner { get; set; }
         public string Name { get; set; }
@@ -16,8 +16,9 @@ namespace GliwickiDzik.API.DTOs
         public bool IsMain { get; set; }
         public int LikeCounter { get; set; }
         public int CommentCounter { get; set; }
-        public ICollection<TrainingForReturnDTO> Trening { get; set; }
-        public ICollection<CommentForReturnDTO> Comments { get; set; }
-        public ICollection<LikeModel> Likes { get; set; }
+        public ICollection<CommentModel> Comments { get; set; }
+        public ICollection<TrainingModel> Trainings { get; set; }
+        public ICollection<LikeModel> PlanIsLiked { get; set; }
+        public ICollection<LikeModel> UserLikes { get; set; }
     }
 }

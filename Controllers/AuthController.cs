@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GliwickiDzik.Controllers
 {
-    // http:localhost:5000/api/auth
+    //http://localhost:5000/api/auth
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -31,13 +31,13 @@ namespace GliwickiDzik.Controllers
         }
 
         // http:localhost:5000/api/auth/register
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(UserForRegisterDTO userForRegisterDTO)
         {
             userForRegisterDTO.Username = userForRegisterDTO.Username.ToLower();
 
             if (await _repository.IsUserExist(userForRegisterDTO.Username))
-                return BadRequest("Użytkownik o podanym loginie juz istnieje");
+                return BadRequest("This user already exist!");
 
             var userToCreate = _mapper.Map<UserModel>(userForRegisterDTO);
             
@@ -45,18 +45,37 @@ namespace GliwickiDzik.Controllers
 
             var userToUse = _mapper.Map<UserForReturnDTO>(createdUser);
 
-            return CreatedAtRoute("GetUser", new { controller = "User", Id = createdUser.UserId }, userToUse );
+            var newToken = TokenGenerator(userToCreate);
+
+            return Ok(new
+            {
+                newToken,
+                userToUse
+            });
         }
 
         // http:localhost/api/auth/login
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(UserForLoginDTO userForLoginDTO)
         {
             var userToLogin = await _repository.Login(userForLoginDTO.Username.ToLower(), userForLoginDTO.Password);
 
             if (userToLogin == null)
                 return Unauthorized();
+            
+            var userToUse = _mapper.Map<UserForReturnDTO>(userToLogin);
 
+            var newToken = TokenGenerator(userToLogin);
+
+            return Ok(new
+            {
+                newToken,
+                userToUse
+            });
+        }
+
+        private Object TokenGenerator(UserModel userToLogin)
+        {
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userToLogin.UserId.ToString()),
@@ -77,10 +96,7 @@ namespace GliwickiDzik.Controllers
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new
-            {
-                token = tokenHandler.WriteToken(token)
-            });
+            return new { token = tokenHandler.WriteToken(token) };
         }
     }
 }

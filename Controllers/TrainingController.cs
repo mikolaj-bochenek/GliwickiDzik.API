@@ -13,8 +13,8 @@ using GliwickiDzik.API.Helpers;
 
 namespace GliwickiDzik.API.Controllers
 {
-    //http:localhost:5000/api/training
-    [Route("api/[controller]")]
+    //http://localhost:5000/api/{userId}/training
+    [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]
     [ServiceFilter(typeof(ActionFilter))]
@@ -60,7 +60,7 @@ namespace GliwickiDzik.API.Controllers
             return Ok(trainingPlansToReturn);
         }
 
-        [HttpGet("GetTrainingPlansForUser/{userId}")]
+        [HttpGet("GetTrainingPlansForUser")]
         public async Task<IActionResult> GetTrainingPlansForUser(int userId, [FromQuery]TrainingPlanParams trainingPlanParams)
         {
             var trainingPlans = await _repository.GetTrainingPlansForUserAsync(userId, trainingPlanParams);
@@ -76,7 +76,7 @@ namespace GliwickiDzik.API.Controllers
             
         }
         
-        [HttpPost("{userId}/AddTrainingPlan")]
+        [HttpPost("AddTrainingPlan")]
         public async Task<IActionResult> CreateTrainingPlan(int userId, TrainingPlanForCreateDTO trainingPlanForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -100,7 +100,7 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error occured while trying to save in database");
         }
 
-        [HttpPut("{userId}/EditTrainingPlan/{trainingPlanId}")]
+        [HttpPut("EditTrainingPlan/{trainingPlanId}")]
         public async Task<IActionResult> EditTrainingPlanAsync(int userId, int trainingPlanId, TrainingPlanForEditDTO trainingPlanForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -120,7 +120,7 @@ namespace GliwickiDzik.API.Controllers
             
         }
         
-        [HttpDelete("{userId}/RemoveTrainingPlan/{trainingPlanId}")]
+        [HttpDelete("RemoveTrainingPlan/{trainingPlanId}")]
         public async Task<IActionResult> RemoveTrainingPlanAsync(int userId, int trainingPlanId)
 
         {
@@ -170,7 +170,7 @@ namespace GliwickiDzik.API.Controllers
             return Ok(trainingsToReturn);
         }
         
-        [HttpPost("{userId}/AddTraining/{trainingPlanId}")]
+        [HttpPost("AddTraining/{trainingPlanId}")]
         public async Task<IActionResult> CreateTrainingAsync(int userId, int trainingPlanId, TrainingForCreateDTO trainingForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -190,7 +190,7 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error occured while trying to save in database");
         }
 
-        [HttpPut("{userId}/EditTraining/{trainingId}")]
+        [HttpPut("EditTraining/{trainingId}")]
         public async Task<IActionResult> EditTraining(int userId, int trainingId, TrainingForEditDTO trainingForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -209,7 +209,7 @@ namespace GliwickiDzik.API.Controllers
             return NoContent();
         }
         
-        [HttpDelete("{userId}/RemoveTraining/{trainingId}")]
+        [HttpDelete("RemoveTraining/{trainingId}")]
         public async Task<IActionResult> RemoveTraining(int userId, int trainingId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -258,7 +258,7 @@ namespace GliwickiDzik.API.Controllers
             return Ok(exercisesToReturn);
         }
 
-        [HttpPost("{userId}/AddExercise/{trainingId}")]
+        [HttpPost("AddExercise/{trainingId}")]
         public async Task<IActionResult> CreateExersiceForTraining(int userId, int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -278,7 +278,7 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error occured while trying to save in database");
         }
 
-        [HttpPut("{userId}/EditExercise/{exerciseId}")]
+        [HttpPut("EditExercise/{exerciseId}")]
         public async Task<IActionResult> EditExerciseForTraining(int userId, int exerciseId, ExerciseForTrainingForEditDTO exerciseForTrainingForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -294,7 +294,7 @@ namespace GliwickiDzik.API.Controllers
             return NoContent();
         }
         
-        [HttpDelete("{userId}/RemoveExercise/{exerciseId}")]
+        [HttpDelete("RemoveExercise/{exerciseId}")]
         public async Task<IActionResult> RemoveExerciseForTraining(int userId, int exerciseId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))

@@ -12,7 +12,7 @@ using GliwickiDzik.API.Helpers;
 
 namespace GliwickiDzik.API.Controllers
 {
-    //http://localhost:5000/api/users/userid/content
+    //http://localhost:5000/api/userid/content
     [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]

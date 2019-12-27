@@ -15,7 +15,7 @@ using GliwickiDzik.API.Models;
 namespace GliwickiDzik.Controllers
 {
     //http://localhost:5000/api/user
-    [Route("api/[controller]")]
+    [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]
     [ServiceFilter(typeof(ActionFilter))]
@@ -32,10 +32,10 @@ namespace GliwickiDzik.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetUser/{id}", Name = "GetUser")]
-        public async Task<IActionResult> GetUser(int id)
+        [HttpGet("GetUser", Name = "GetUser")]
+        public async Task<IActionResult> GetUser(int userId)
         {
-            var userForGet = await _repository.GetUserByIdAsync(id);
+            var userForGet = await _repository.GetUserByIdAsync(userId);
 
             if (userForGet == null)
                 return BadRequest("The user cannot be found!");
@@ -60,13 +60,13 @@ namespace GliwickiDzik.Controllers
             return Ok(listedUsers);
         }
 
-        [HttpPut("EditUser/{id}")]
-        public async Task<IActionResult> EditUserAsync(int id, UserForEditDTO userForEditDTO)
+        [HttpPut("EditUser")]
+        public async Task<IActionResult> EditUserAsync(int userId, UserForEditDTO userForEditDTO)
         {
-            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userForEdit = await _repository.GetUserByIdAsync(id);
+            var userForEdit = await _repository.GetUserByIdAsync(userId);
 
             _mapper.Map(userForEditDTO, userForEdit);
 
@@ -76,13 +76,13 @@ namespace GliwickiDzik.Controllers
             throw new Exception("Error occured while trying to save in database");
         }
 
-        [HttpDelete("DeleteUser/{id}")]
-        public async Task<IActionResult> RemoveUserAsync(int id)
+        [HttpDelete("DeleteUser")]
+        public async Task<IActionResult> RemoveUserAsync(int userId)
         {
-            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var userToDelete = await _repository.GetUserByIdAsync(id);
+            var userToDelete = await _repository.GetUserByIdAsync(userId);
             
             _repository.Remove(userToDelete);
 
@@ -92,7 +92,7 @@ namespace GliwickiDzik.Controllers
             throw new Exception("Error occured while trying to save in database");
         }
 
-        [HttpPost("AddLike/{userId}/Like/{trainingPlanId}")]
+        [HttpPost("AddLike/{trainingPlanId}")]
         public async Task<IActionResult> CreateLikeAsync(int userId, int trainingPlanId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -122,7 +122,7 @@ namespace GliwickiDzik.Controllers
             throw new Exception("Errorc occured while trying save changes to database!");
         }
 
-        [HttpPost("Dislike/{userId}/Dislike/{trainingPlanId}")]
+        [HttpPost("DeleteLike/{trainingPlanId}")]
         public async Task<IActionResult> DislikeUserAsync(int userId, int trainingPlanId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))

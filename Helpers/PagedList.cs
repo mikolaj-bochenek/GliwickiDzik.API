@@ -22,7 +22,7 @@ namespace GliwickiDzik.API.Helpers
         public int TotalCount { get; set; }
         public int TotalPages { get; set; }
 
-        public static async Task<PagedList<T>> CreateListAsync(IQueryable<T> source, int pageNumber, int pageSize)
+        public static async Task<PagedList<T>> CreateListAsync(IQueryable<T> source, int pageSize, int pageNumber)
         {
             var totalCount = await source.CountAsync();
 
