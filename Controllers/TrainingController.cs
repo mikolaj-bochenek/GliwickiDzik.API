@@ -46,18 +46,36 @@ namespace GliwickiDzik.API.Controllers
         }
 
         [HttpGet("GetTrainingPlans")]
-        public async Task<IActionResult> GetAllTrainingPlansAsync()
+        public async Task<IActionResult> GetAllTrainingPlansAsync([FromQuery]TrainingPlanParams trainingPlanParams)
         {
-            var trainingPlans = await _repository.GetAllTrainingPlansAsync();
+            var trainingPlans = await _repository.GetAllTrainingPlansAsync(trainingPlanParams);
 
             if (trainingPlans == null)
                 return BadRequest("Error: training plans cannot be found");
 
             var trainingPlansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(trainingPlans);
 
+            Response.AddPagination(trainingPlans.CurrentPage, trainingPlans.PageSize, trainingPlans.TotalCount, trainingPlans.TotalPages);
+
             return Ok(trainingPlansToReturn);
         }
 
+        [HttpGet("GetTrainingPlansForUser/{userId}")]
+        public async Task<IActionResult> GetTrainingPlansForUser(int userId, [FromQuery]TrainingPlanParams trainingPlanParams)
+        {
+            var trainingPlans = await _repository.GetTrainingPlansForUserAsync(userId, trainingPlanParams);
+
+            if (trainingPlans == null)
+                return BadRequest("Training plans cannot be found!");
+            
+            var trainingPlansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(trainingPlans);
+
+            Response.AddPagination(trainingPlans.CurrentPage, trainingPlans.PageSize, trainingPlans.TotalCount, trainingPlans.TotalPages);
+
+            return Ok(trainingPlansToReturn);
+            
+        }
+        
         [HttpPost("{userId}/AddTrainingPlan")]
         public async Task<IActionResult> CreateTrainingPlan(int userId, TrainingPlanForCreateDTO trainingPlanForCreateDTO)
         {

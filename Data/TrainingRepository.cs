@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GliwickiDzik.API.Helpers;
 using GliwickiDzik.API.Models;
 using GliwickiDzik.Data;
 using Microsoft.EntityFrameworkCore;
@@ -69,13 +70,29 @@ namespace GliwickiDzik.API.Data
 
             return exercises;
         }
-
-        public async Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansAsync()
+        public async Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansAsync(TrainingPlanParams trainingPlanParams)
         {
-            var trainingPlans = await _context.TrainingPlanModel.Include(p => p.Trainings).ToListAsync();
-            trainingPlans.OrderByDescending(p => p.DateOfCreated);
+            var trainingPlans = _context.TrainingPlanModel.Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
 
-            return trainingPlans;
+            if (!string.IsNullOrEmpty(trainingPlanParams.OrderBy))
+            {
+                switch(trainingPlanParams.OrderBy)
+                {
+                    case "Newest":
+                        trainingPlans = trainingPlans.OrderByDescending(p => p.DateOfCreated);
+                        break;
+                    
+                    case "Oldest":
+                        trainingPlans = trainingPlans.OrderBy(p => p.DateOfCreated);
+                        break;
+                    
+                    default:
+                        trainingPlans = trainingPlans.OrderByDescending(p => p.LikeCounter);
+                        break;
+                }
+            }
+            
+             return await PagedList<TrainingPlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
         }
 
         public async Task<IEnumerable<TrainingModel>> GetAllTrainingsAsync()
@@ -100,6 +117,31 @@ namespace GliwickiDzik.API.Data
         {
             return await _context.TrainingPlanModel.Include(t => t.Trainings)
                 .FirstOrDefaultAsync(p => p.TrainingPlanId == id);
+        }
+
+        public async Task<PagedList<TrainingPlanModel>> GetTrainingPlansForUserAsync(int userId, TrainingPlanParams trainingPlanParams)
+        {
+            var trainingPlans = _context.TrainingPlanModel.Where(p => p.UserId == userId).Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
+
+            if (!string.IsNullOrEmpty(trainingPlanParams.OrderBy))
+            {
+                switch(trainingPlanParams.OrderBy)
+                {
+                    case "Newest":
+                        trainingPlans = trainingPlans.OrderByDescending(p => p.DateOfCreated);
+                        break;
+                    
+                    case "Oldest":
+                        trainingPlans = trainingPlans.OrderBy(p => p.DateOfCreated);
+                        break;
+                    
+                    default:
+                        trainingPlans = trainingPlans.OrderByDescending(p => p.LikeCounter);
+                        break;
+                }
+            }
+            
+             return await PagedList<TrainingPlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
         }
 
         public void Remove(TrainingPlanModel entity)

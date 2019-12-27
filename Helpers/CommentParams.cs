@@ -7,7 +7,7 @@ namespace GliwickiDzik.API.Helpers
         private int _pageSize = 10;
         public int PageSize
         {
-            get { return _pageSize = 10; }
+            get { return _pageSize; }
             set { _pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
         public int TrainingPlanId { get; set; }
