@@ -45,7 +45,7 @@ namespace GliwickiDzik
             {
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddAutoMapper();
+            //services.AddAutoMapper();
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

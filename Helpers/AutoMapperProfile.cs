@@ -26,12 +26,14 @@ namespace GliwickiDzik.API.Helpers
             
             CreateMap<ExerciseForTrainingForCreateDTO, ExerciseForTrainingModel>();
             CreateMap<ExerciseForTrainingForEditDTO, ExerciseForTrainingModel >();
-            CreateMap<ExerciseForTrainingModel, ExerciseForTrainingForReturnDTO>();
+            CreateMap<ExerciseForTrainingModel, ExerciseForTrainingForReturnDTO>().ReverseMap();
 
             CreateMap<TrainingPlanForCreateDTO, TrainingPlanModel>();
+            CreateMap<TrainingPlanModel, TrainingPlanForReturnDTO>();
 
             CreateMap<TrainingForCreateDTO, TrainingModel>();
             CreateMap<TrainingForEditDTO, TrainingModel>();
+            CreateMap<TrainingModel, TrainingForReturnDTO>();
 
             CreateMap<TrainingPlanModel, TrainingPlanForReturnDTO>();
             CreateMap<TrainingPlanForEditDTO, TrainingPlanModel>();

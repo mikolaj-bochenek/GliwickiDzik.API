@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GliwickiDzik.Migrations
 {
-    public partial class AddDatabaseInitialize : Migration
+    public partial class Initialize : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -205,40 +205,18 @@ namespace GliwickiDzik.Migrations
                     Name = table.Column<string>(nullable: true),
                     Day = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    TrainingPlanModelTrainingPlanId = table.Column<int>(nullable: true),
+                    DateOfCreated = table.Column<DateTime>(nullable: false),
                     TrainingPlanId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TrainingModel", x => x.TrainingId);
                     table.ForeignKey(
-                        name: "FK_TrainingModel_TrainingPlanModel_TrainingPlanModelTrainingPlanId",
-                        column: x => x.TrainingPlanModelTrainingPlanId,
+                        name: "FK_TrainingModel_TrainingPlanModel_TrainingPlanId",
+                        column: x => x.TrainingPlanId,
                         principalTable: "TrainingPlanModel",
                         principalColumn: "TrainingPlanId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExerciseForTrainingForReturnDTO",
-                columns: table => new
-                {
-                    ExerciseForTrainingId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Sets = table.Column<int>(nullable: false),
-                    Reps = table.Column<int>(nullable: false),
-                    TrainingModelTrainingId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExerciseForTrainingForReturnDTO", x => x.ExerciseForTrainingId);
-                    table.ForeignKey(
-                        name: "FK_ExerciseForTrainingForReturnDTO_TrainingModel_TrainingModelTrainingId",
-                        column: x => x.TrainingModelTrainingId,
-                        principalTable: "TrainingModel",
-                        principalColumn: "TrainingId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -272,11 +250,6 @@ namespace GliwickiDzik.Migrations
                 name: "IX_CommentModel_TrainingPlanId",
                 table: "CommentModel",
                 column: "TrainingPlanId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExerciseForTrainingForReturnDTO_TrainingModelTrainingId",
-                table: "ExerciseForTrainingForReturnDTO",
-                column: "TrainingModelTrainingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExerciseForTrainingModel_TrainingId",
@@ -314,9 +287,9 @@ namespace GliwickiDzik.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TrainingModel_TrainingPlanModelTrainingPlanId",
+                name: "IX_TrainingModel_TrainingPlanId",
                 table: "TrainingModel",
-                column: "TrainingPlanModelTrainingPlanId");
+                column: "TrainingPlanId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrainingPlanModel_UserId",
@@ -328,9 +301,6 @@ namespace GliwickiDzik.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CommentModel");
-
-            migrationBuilder.DropTable(
-                name: "ExerciseForTrainingForReturnDTO");
 
             migrationBuilder.DropTable(
                 name: "ExerciseForTrainingModel");

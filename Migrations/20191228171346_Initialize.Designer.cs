@@ -9,39 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GliwickiDzik.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191227144124_AddDatabaseInitialize")]
-    partial class AddDatabaseInitialize
+    [Migration("20191228171346_Initialize")]
+    partial class Initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.0");
-
-            modelBuilder.Entity("GliwickiDzik.API.DTOs.ExerciseForTrainingForReturnDTO", b =>
-                {
-                    b.Property<int>("ExerciseForTrainingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Reps")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Sets")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TrainingModelTrainingId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ExerciseForTrainingId");
-
-                    b.HasIndex("TrainingModelTrainingId");
-
-                    b.ToTable("ExerciseForTrainingForReturnDTO");
-                });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.CommentModel", b =>
                 {
@@ -213,6 +188,9 @@ namespace GliwickiDzik.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("DateOfCreated")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Day")
                         .HasColumnType("TEXT");
 
@@ -225,12 +203,9 @@ namespace GliwickiDzik.Migrations
                     b.Property<int>("TrainingPlanId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("TrainingPlanModelTrainingPlanId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("TrainingId");
 
-                    b.HasIndex("TrainingPlanModelTrainingPlanId");
+                    b.HasIndex("TrainingPlanId");
 
                     b.ToTable("TrainingModel");
                 });
@@ -328,13 +303,6 @@ namespace GliwickiDzik.Migrations
                     b.ToTable("UserModel");
                 });
 
-            modelBuilder.Entity("GliwickiDzik.API.DTOs.ExerciseForTrainingForReturnDTO", b =>
-                {
-                    b.HasOne("GliwickiDzik.API.Models.TrainingModel", null)
-                        .WithMany("ExercisesForTraining")
-                        .HasForeignKey("TrainingModelTrainingId");
-                });
-
             modelBuilder.Entity("GliwickiDzik.API.Models.CommentModel", b =>
                 {
                     b.HasOne("GliwickiDzik.Models.UserModel", "Commenter")
@@ -353,7 +321,7 @@ namespace GliwickiDzik.Migrations
             modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseForTrainingModel", b =>
                 {
                     b.HasOne("GliwickiDzik.API.Models.TrainingModel", "Training")
-                        .WithMany()
+                        .WithMany("ExercisesForTraining")
                         .HasForeignKey("TrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -408,9 +376,11 @@ namespace GliwickiDzik.Migrations
 
             modelBuilder.Entity("GliwickiDzik.API.Models.TrainingModel", b =>
                 {
-                    b.HasOne("GliwickiDzik.API.Models.TrainingPlanModel", "TrainingPlanModel")
+                    b.HasOne("GliwickiDzik.API.Models.TrainingPlanModel", "TrainingPlan")
                         .WithMany("Trainings")
-                        .HasForeignKey("TrainingPlanModelTrainingPlanId");
+                        .HasForeignKey("TrainingPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.TrainingPlanModel", b =>

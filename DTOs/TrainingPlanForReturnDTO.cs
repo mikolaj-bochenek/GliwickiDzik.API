@@ -16,8 +16,8 @@ namespace GliwickiDzik.API.DTOs
         public bool IsMain { get; set; }
         public int LikeCounter { get; set; }
         public int CommentCounter { get; set; }
-        public ICollection<CommentModel> Comments { get; set; }
-        public ICollection<TrainingModel> Trainings { get; set; }
+        public ICollection<CommentForReturnDTO> Comments { get; set; }
+        public ICollection<TrainingForReturnDTO> Trainings { get; set; }
         public ICollection<LikeModel> PlanIsLiked { get; set; }
         public ICollection<LikeModel> UserLikes { get; set; }
     }
