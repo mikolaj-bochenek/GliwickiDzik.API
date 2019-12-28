@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GliwickiDzik.Migrations
 {
-    public partial class Initialize : Migration
+    public partial class Initit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
