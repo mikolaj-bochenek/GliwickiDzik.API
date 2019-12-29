@@ -255,6 +255,25 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error: Removing training from database failed!");
         }
         
+        [HttpDelete("RemoveTrainings/planTrainingId")]
+        public async Task<IActionResult> RemoveAllTrainingsAsync(int userId, int trainingPlanId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized("User is not authorized!");
+            
+            var trainingsToRemove = await _repository.GetAllTrainingsForTrainingPlanAsync(trainingPlanId);
+
+            if (trainingsToRemove == null)
+                return BadRequest("Training plans cannot be found!");
+            
+            _repository.RemoveRange(trainingsToRemove);
+
+            if (await _repository.SaveAllTrainingContent())
+                return NoContent();
+            
+            throw new Exception("Error: Removing trainings to dabasae failed!");
+        }
+        
         #endregion
 
         #region  = "EXERCISE FOR TRAINING"
