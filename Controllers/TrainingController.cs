@@ -82,8 +82,8 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            if (trainingPlanForCreateDTO == null)
-                return BadRequest("Object cannot be null!");
+            if (await _repository.IsTrainingPlanExist(userId, trainingPlanForCreateDTO.Name))
+                return BadRequest("Error: The trainig plan with this name already exist!");
 
             var trainingPlanForCreate = _mapper.Map<TrainingPlanModel>(trainingPlanForCreateDTO);
             trainingPlanForCreate.UserId = userId;
@@ -110,7 +110,10 @@ namespace GliwickiDzik.API.Controllers
 
             if (trainingPlan == null)
                 return BadRequest("Error: The training plan cannot be found!");
-            
+
+            if (await _repository.IsTrainingPlanExist(userId, trainingPlanForEditDTO.Name))
+                return BadRequest("Error: The trainig plan with this name already exist!");
+
             var editedTrainingPlan = _mapper.Map(trainingPlanForEditDTO, trainingPlan);
 
             if (!await _repository.SaveAllTrainingContent())

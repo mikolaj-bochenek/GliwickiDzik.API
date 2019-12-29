@@ -48,6 +48,13 @@ namespace GliwickiDzik.API.Data
             _context.ExerciseForTrainingModel.AddRange(entities);
         }
 
+        public async Task<bool> IsTrainingPlanExist(int userId, string trainingPlanName)
+        {
+            if(await _context.TrainingPlanModel.AnyAsync(p => p.Name == trainingPlanName && p.UserId == userId))
+                return true;
+
+            return false;
+        }
         
 
         public async Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync(int trainingId)
