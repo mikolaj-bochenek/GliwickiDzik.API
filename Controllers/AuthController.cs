@@ -30,7 +30,6 @@ namespace GliwickiDzik.Controllers
             _repository = repository;
         }
 
-        // http:localhost:5000/api/auth/register
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserForRegisterDTO userForRegisterDTO)
         {
@@ -45,16 +44,11 @@ namespace GliwickiDzik.Controllers
 
             var userToUse = _mapper.Map<UserForReturnDTO>(createdUser);
 
-            var newToken = TokenGenerator(userToCreate);
+            var newToken = TokenGenerator(userToCreate).ToString();
 
-            return Ok(new
-            {
-                newToken,
-                userToUse
-            });
+            return Created(newToken, userToUse);
         }
 
-        // http:localhost/api/auth/login
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserForLoginDTO userForLoginDTO)
         {
@@ -65,7 +59,7 @@ namespace GliwickiDzik.Controllers
             
             var userToUse = _mapper.Map<UserForReturnDTO>(userToLogin);
 
-            var newToken = TokenGenerator(userToLogin);
+            var newToken = TokenGenerator(userToLogin).ToString();
 
             return Ok(new
             {

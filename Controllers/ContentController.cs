@@ -75,7 +75,7 @@ namespace GliwickiDzik.API.Controllers
             var recipient = await _userRepository.GetOneUserAsync(messageForCreateDTO.RecipientId);
 
             if (recipient == null)
-                return BadRequest("User cannot be found!");
+                return BadRequest("Error: The user cannot be found!");
             
             var createdMessage = _mapper.Map<MessageModel>(messageForCreateDTO);
 
@@ -84,7 +84,7 @@ namespace GliwickiDzik.API.Controllers
             //var messageToReturn = _mapper.Map<MessageForCreateDTO>(createdMessage);
             
             if (!await _repository.SaveContentAsync())
-                throw new Exception("Error occured while trying to save changes in database!");
+                throw new Exception("Error: Saving message to database failed!");
             
             //return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, messageToReturn);
             return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, createdMessage);
@@ -110,7 +110,7 @@ namespace GliwickiDzik.API.Controllers
                 _repository.Remove(message);
             
             if (!await _repository.SaveContentAsync())
-                throw new Exception("Error occuerd while trying to save changes in database");
+                throw new Exception("Error: Removing message from database failed!");
             
             return NoContent();
         }
@@ -130,7 +130,7 @@ namespace GliwickiDzik.API.Controllers
             message.DateOfRead = DateTime.Now;
 
             if (!await _repository.SaveContentAsync())
-                throw new Exception("Error uccured while trying to save changes in database");
+                throw new Exception("Error: Saving readed message to database failed!");
             
             return NoContent();
         }
@@ -145,7 +145,7 @@ namespace GliwickiDzik.API.Controllers
             var comment = await _repository.GetCommentAsync(commentId);
 
             if (comment == null)
-                return BadRequest("Comment cannot be found!");
+                return BadRequest("Error: The comment cannot be found!");
             
             var commentToReturn = _mapper.Map<CommentForReturnDTO>(comment);
 
@@ -158,7 +158,7 @@ namespace GliwickiDzik.API.Controllers
             var commentsToList = await _repository.GetAllCommentsAsync(trainingPlanId, commentParams);
 
             if (commentsToList == null)
-                return BadRequest("Comments cannot be found!");
+                return BadRequest("Error: Comments cannot be found!");
             
             var commentsToReturn = _mapper.Map<IEnumerable<CommentForReturnDTO>>(commentsToList);
 
@@ -173,6 +173,11 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
+            var trainingPlan = await _repository.GetCommentAsync(trainingPlanId);
+
+            if (trainingPlan == null)
+                return BadRequest("Error: The training plan cannot be found!");
+            
             var comment = _mapper.Map<CommentModel>(commentForCreateDTO);
             comment.CommenterId = userId;
             comment.TrainingPlanId = trainingPlanId;
@@ -180,7 +185,7 @@ namespace GliwickiDzik.API.Controllers
             _repository.Add(comment);
 
             if (!await _repository.SaveContentAsync())
-                throw new Exception("Error occurred while trying save changes to database!!");
+                throw new Exception("Error: Saving comment to database failed!");
             
             return NoContent();
         }
@@ -199,7 +204,7 @@ namespace GliwickiDzik.API.Controllers
             var editedComment = _mapper.Map(commentToEdit, commentForEditDTO);
 
             if (!await _repository.SaveContentAsync())
-                throw new Exception("Error occurred while trying save changes to database!");
+                throw new Exception("Error: Saving edited comment to database failed!");
             
             return NoContent();
         }
@@ -216,14 +221,16 @@ namespace GliwickiDzik.API.Controllers
                 return BadRequest("The comment cannnot be found!");
             
             if (userId != commentToDelete.CommenterId)
-                return BadRequest("You are not allowed to remove this comment!");
+                return Unauthorized();
+
             _repository.Remove(commentToDelete);
 
             if (await _repository.SaveContentAsync())
                 return NoContent();
 
-            throw new Exception("Error occurred while trying save changes to database!");   
+            throw new Exception("Error: Removing comment from database failed!");   
         }
+        
         #endregion
     }
 }
