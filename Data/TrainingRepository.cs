@@ -50,9 +50,11 @@ namespace GliwickiDzik.API.Data
 
         
 
-        public async Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync()
+        public async Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync(int trainingId)
         {
-            var exercises = await _context.ExerciseForTrainingModel.ToListAsync();
+            var exercises = await _context.ExerciseForTrainingModel
+                                            .Where(t => t.TrainingId == trainingId)
+                                            .ToListAsync();
             exercises.OrderByDescending(e => e.ExerciseForTrainingId);
 
             return exercises;
@@ -82,31 +84,34 @@ namespace GliwickiDzik.API.Data
              return await PagedList<TrainingPlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
         }
 
-        public async Task<IEnumerable<TrainingModel>> GetAllTrainingsAsync()
+        public async Task<IEnumerable<TrainingModel>> GetAllTrainingsForTrainingPlanAsync(int trainingPlanId)
         {
-            var trainings = await _context.TrainingModel.Include(e => e.ExercisesForTraining).ToListAsync();
+            var trainings = await _context.TrainingModel
+                                        .Include(e => e.ExercisesForTraining)
+                                        .Where(p => p.TrainingPlanId == trainingPlanId)
+                                        .ToListAsync();
             trainings.OrderByDescending(e => e.Day);
 
             return trainings;
         }
 
-        public async Task<ExerciseForTrainingModel> GetExerciseForTrainingAsync(int id)
+        public async Task<ExerciseForTrainingModel> GetOneExerciseAsync(int exerciseId)
         {
-            return await _context.ExerciseForTrainingModel.FirstOrDefaultAsync(e => e.ExerciseForTrainingId == id);
+            return await _context.ExerciseForTrainingModel.FirstOrDefaultAsync(e => e.ExerciseForTrainingId == exerciseId);
         }
 
-        public async Task<TrainingModel> GetTrainingAsync(int id)
+        public async Task<TrainingModel> GetOneTrainingAsync(int trainingId)
         {
-            return await _context.TrainingModel.FirstOrDefaultAsync(t => t.TrainingId == id);
+            return await _context.TrainingModel.FirstOrDefaultAsync(t => t.TrainingId == trainingId);
         }
 
-        public async Task<TrainingPlanModel> GetTrainingPlanAsync(int id)
+        public async Task<TrainingPlanModel> GetOneTrainingPlanAsync(int trainingPlanId)
         {
             return await _context.TrainingPlanModel.Include(t => t.Trainings)
-                .FirstOrDefaultAsync(p => p.TrainingPlanId == id);
+                .FirstOrDefaultAsync(p => p.TrainingPlanId == trainingPlanId);
         }
 
-        public async Task<PagedList<TrainingPlanModel>> GetTrainingPlansForUserAsync(int userId, TrainingPlanParams trainingPlanParams)
+        public async Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int userId, TrainingPlanParams trainingPlanParams)
         {
             var trainingPlans = _context.TrainingPlanModel.Where(p => p.UserId == userId).Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
 

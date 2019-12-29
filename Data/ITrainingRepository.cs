@@ -7,13 +7,13 @@ namespace GliwickiDzik.API.Data
 {
     public interface ITrainingRepository : IGenericRepository<TrainingPlanModel>, IGenericRepository<TrainingModel>, IGenericRepository<ExerciseForTrainingModel>
     {
-         Task<TrainingPlanModel> GetTrainingPlanAsync(int id);
+         Task<TrainingPlanModel> GetOneTrainingPlanAsync(int trainingPlanId);
          Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansAsync(TrainingPlanParams trainingPlanParams);
-         Task<PagedList<TrainingPlanModel>> GetTrainingPlansForUserAsync(int userId, TrainingPlanParams trainingPlanParams);
-         Task<TrainingModel> GetTrainingAsync(int id);
-         Task<IEnumerable<TrainingModel>> GetAllTrainingsAsync();
-         Task<ExerciseForTrainingModel> GetExerciseForTrainingAsync(int id);
-         Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync();
+         Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int userId, TrainingPlanParams trainingPlanParams);
+         Task<TrainingModel> GetOneTrainingAsync(int trainingId);
+         Task<IEnumerable<TrainingModel>> GetAllTrainingsForTrainingPlanAsync(int trainingPlanId);
+         Task<ExerciseForTrainingModel> GetOneExerciseAsync(int exerciseId);
+         Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync(int trainingId);
          Task<bool> SaveAllTrainingContent();
     }
 }

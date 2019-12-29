@@ -101,7 +101,7 @@ namespace GliwickiDzik.Controllers
             if (await _repository.IsLikedAsync(userId, trainingPlanId))
                 return BadRequest("You already likes this training plan!");
             
-            var trainingPlanToLike = await _trainingRepository.GetTrainingPlanAsync(trainingPlanId);
+            var trainingPlanToLike = await _trainingRepository.GetOneTrainingPlanAsync(trainingPlanId);
 
             if (trainingPlanToLike == null)
                 return BadRequest("The trainingPlan cannot be found!");
@@ -131,7 +131,7 @@ namespace GliwickiDzik.Controllers
             if (!await _repository.IsLikedAsync(userId, trainingPlanId))
                 return BadRequest("You have to first liked this training plan!");
 
-            var trainingPlanToDislike = await _trainingRepository.GetTrainingPlanAsync(trainingPlanId);
+            var trainingPlanToDislike = await _trainingRepository.GetOneTrainingPlanAsync(trainingPlanId);
 
             if (trainingPlanToDislike == null)
                 return BadRequest("The trainingPlan cannot be found!");

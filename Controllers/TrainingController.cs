@@ -33,9 +33,9 @@ namespace GliwickiDzik.API.Controllers
 
         #region = "TRAINING PLAN CRUD"
         [HttpGet("GetTrainingPlan/{trainingPlanId}")]
-        public async Task<IActionResult> GetTrainingPlanAsync(int trainingPlanId)
+        public async Task<IActionResult> GetOneTrainingPlanAsync(int trainingPlanId)
         {
-            var trainingPlan = await _repository.GetTrainingPlanAsync(trainingPlanId);
+            var trainingPlan = await _repository.GetOneTrainingPlanAsync(trainingPlanId);
 
             if (trainingPlan == null)
                 return BadRequest("Error: The training plan cannot be found");
@@ -61,9 +61,9 @@ namespace GliwickiDzik.API.Controllers
         }
 
         [HttpGet("GetTrainingPlansForUser")]
-        public async Task<IActionResult> GetTrainingPlansForUser(int userId, [FromQuery]TrainingPlanParams trainingPlanParams)
+        public async Task<IActionResult> GetAllTrainingPlansForUserAsync(int userId, [FromQuery]TrainingPlanParams trainingPlanParams)
         {
-            var trainingPlans = await _repository.GetTrainingPlansForUserAsync(userId, trainingPlanParams);
+            var trainingPlans = await _repository.GetAllTrainingPlansForUserAsync(userId, trainingPlanParams);
 
             if (trainingPlans == null)
                 return BadRequest("Training plans cannot be found!");
@@ -106,7 +106,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingPlan = await _repository.GetTrainingPlanAsync(trainingPlanId);
+            var trainingPlan = await _repository.GetOneTrainingPlanAsync(trainingPlanId);
 
             if (trainingPlan == null)
                 return BadRequest("Error: The training plan cannot be found!");
@@ -127,7 +127,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userToRemove = await _repository.GetTrainingPlanAsync(trainingPlanId);
+            var userToRemove = await _repository.GetOneTrainingPlanAsync(trainingPlanId);
 
             if (userToRemove == null)
                 return BadRequest("Error: Training pplan cannot be found");
@@ -145,9 +145,9 @@ namespace GliwickiDzik.API.Controllers
         #region = "TRAINING CRUD"
 
         [HttpGet("GetTraining/{trainingId}")]
-        public async Task<IActionResult> GetTrainingAsync(int trainingId)
+        public async Task<IActionResult> GetOneTrainingAsync(int trainingId)
         {
-            var training = await _repository.GetTrainingAsync(trainingId);
+            var training = await _repository.GetOneTrainingAsync(trainingId);
 
             if (training == null)
                 return BadRequest("Error: The training plan cannot be found");
@@ -157,10 +157,10 @@ namespace GliwickiDzik.API.Controllers
             return Ok(trainingToReturn);
         }
 
-        [HttpGet("GetTrainings")]
-        public async Task<IActionResult> GetAllTrainingsAsync()
+        [HttpGet("GetTrainings/{trainingPlanId}")]
+        public async Task<IActionResult> GetAllTrainingsForTrainingPlanAsync(int trainingPlanId)
         {
-            var trainings = await _repository.GetAllTrainingsAsync();
+            var trainings = await _repository.GetAllTrainingsForTrainingPlanAsync(trainingPlanId);
 
             if (trainings == null)
                 return BadRequest("Error: trainings cannot be found");
@@ -196,7 +196,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var training = await _repository.GetTrainingAsync(trainingId);
+            var training = await _repository.GetOneTrainingAsync(trainingId);
 
             if (training == null)
                 return BadRequest("Error: The trainig cannot be found!");
@@ -215,7 +215,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userToDelete = await _repository.GetTrainingAsync(trainingId);
+            var userToDelete = await _repository.GetOneTrainingAsync(trainingId);
 
             if (userToDelete == null)
                 return BadRequest("Error: The training cannot be found!");
@@ -235,7 +235,7 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("GetExercise/{exerciseId}")]
         public async Task<IActionResult> GetExerciseAsync(int exerciseId)
         {
-            var exericse = await _repository.GetExerciseForTrainingAsync(exerciseId);
+            var exericse = await _repository.GetOneExerciseAsync(exerciseId);
 
             if (exericse == null)
                 return BadRequest("Error: The exercise cannot be found!");
@@ -245,10 +245,10 @@ namespace GliwickiDzik.API.Controllers
             return Ok(exerciseToReturn);
         }
         
-        [HttpGet("GetExercises")]
-        public async Task<IActionResult> GetAllExercisesAsync()
+        [HttpGet("GetExercises/{trainingId}")]
+        public async Task<IActionResult> GetAllExercisesAsync(int trainingId)
         {
-            var exercises = await _repository.GetAllExercisesForTrainingAsync();
+            var exercises = await _repository.GetAllExercisesForTrainingAsync(trainingId);
 
             if (exercises == null)
                 return BadRequest("Training doesn't contain any exercises");
@@ -284,7 +284,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var exercise = await _repository.GetExerciseForTrainingAsync(exerciseId);
+            var exercise = await _repository.GetOneExerciseAsync(exerciseId);
 
             var editedExercise = _mapper.Map(exerciseForTrainingForEditDTO, exercise);
 
@@ -300,7 +300,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var exerciseToDelete = await _repository.GetExerciseForTrainingAsync(exerciseId);
+            var exerciseToDelete = await _repository.GetOneExerciseAsync(exerciseId);
 
             if (exerciseToDelete == null)
                 return BadRequest("Error: The exercise cannot be found!");
