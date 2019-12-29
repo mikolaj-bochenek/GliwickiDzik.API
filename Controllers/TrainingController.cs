@@ -175,7 +175,7 @@ namespace GliwickiDzik.API.Controllers
             var training = await _repository.GetOneTrainingAsync(trainingId);
 
             if (training == null)
-                return BadRequest("Error: The training plan cannot be found");
+                return BadRequest("Error: The training plan cannot be found!");
 
             var trainingToReturn = _mapper.Map<TrainingForReturnDTO>(training);
 
@@ -188,7 +188,7 @@ namespace GliwickiDzik.API.Controllers
             var trainings = await _repository.GetAllTrainingsForTrainingPlanAsync(trainingPlanId);
 
             if (trainings == null)
-                return BadRequest("Error: trainings cannot be found");
+                return BadRequest("Error: Trainings cannot be found!");
 
             var trainingsToReturn = _mapper.Map<IEnumerable<TrainingForReturnDTO>>(trainings);
 
@@ -200,9 +200,11 @@ namespace GliwickiDzik.API.Controllers
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
+            
+            var trainingPlan = await _repository.GetOneTrainingPlanAsync(trainingPlanId);
 
-            if (trainingForCreateDTO == null)
-                return BadRequest("Object cannot be null!");
+            if (trainingPlan == null)
+                return BadRequest("Error: The training plan cannot be found!");
 
             var trainingToCreate = _mapper.Map<TrainingModel>(trainingForCreateDTO);
             trainingToCreate.TrainingPlanId = trainingPlanId;
@@ -210,9 +212,9 @@ namespace GliwickiDzik.API.Controllers
             _repository.Add(trainingToCreate);
 
             if (await _repository.SaveAllTrainingContent())
-                return NoContent();
+                return StatusCode(201);
 
-            throw new Exception("Error occured while trying to save in database");
+            throw new Exception("Error: Saving training to database failed!");
         }
 
         [HttpPut("EditTraining/{trainingId}")]
@@ -228,10 +230,10 @@ namespace GliwickiDzik.API.Controllers
             
             var editedTraining = _mapper.Map(trainingForEditDTO, training);
 
-            if (!await _repository.SaveAllTrainingContent())
-                throw new Exception("Error occured while trying to save in database");
+            if (await _repository.SaveAllTrainingContent())
+                return NoContent();
             
-            return NoContent();
+            throw new Exception("Error: Saving edited training to database failed");
         }
         
         [HttpDelete("RemoveTraining/{trainingId}")]
@@ -240,17 +242,17 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userToDelete = await _repository.GetOneTrainingAsync(trainingId);
+            var trainingToRemove = await _repository.GetOneTrainingAsync(trainingId);
 
-            if (userToDelete == null)
+            if (trainingToRemove == null)
                 return BadRequest("Error: The training cannot be found!");
             
-            _repository.Remove(userToDelete);
+            _repository.Remove(trainingToRemove);
 
-            if (!await _repository.SaveAllTrainingContent())
-                throw new Exception("Error occured while trying to save in database");
-            
-            return NoContent();
+            if (await _repository.SaveAllTrainingContent())
+                return NoContent();
+                
+            throw new Exception("Error: Removing training from database failed!");
         }
         
         #endregion
