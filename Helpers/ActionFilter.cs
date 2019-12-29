@@ -18,11 +18,11 @@ namespace GliwickiDzik.API.Helpers
 
             var userId = int.Parse(resultContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var user = await repository.GetUserByIdAsync(userId);
+            var user = await repository.GetOneUserAsync(userId);
 
             user.LastActive = DateTime.Now;
 
-            await repository.SaveAllUsers();
+            await repository.SaveAllUserContent();
         }
     }
 }

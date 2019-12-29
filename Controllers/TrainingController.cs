@@ -32,6 +32,7 @@ namespace GliwickiDzik.API.Controllers
         }
 
         #region = "TRAINING PLAN CRUD"
+
         [HttpGet("GetTrainingPlan/{trainingPlanId}")]
         public async Task<IActionResult> GetOneTrainingPlanAsync(int trainingPlanId)
         {
@@ -63,7 +64,7 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("GetTrainingPlansForUser/{whoseUserId}")]
         public async Task<IActionResult> GetAllTrainingPlansForUserAsync(int whoseUserId, [FromQuery]TrainingPlanParams trainingPlanParams)
         {
-            var user = await _userRepository.GetUserByIdAsync(whoseUserId);
+            var user = await _userRepository.GetOneUserAsync(whoseUserId);
 
             if (user == null)
                 return BadRequest("Error: The user cannot be found!");
@@ -93,7 +94,7 @@ namespace GliwickiDzik.API.Controllers
             var trainingPlanForCreate = _mapper.Map<TrainingPlanModel>(trainingPlanForCreateDTO);
             trainingPlanForCreate.UserId = userId;
 
-            var userWhoCreated = await _userRepository.GetUserByIdAsync(userId);
+            var userWhoCreated = await _userRepository.GetOneUserAsync(userId);
 
             trainingPlanForCreate.Owner = userWhoCreated.Username;
 
@@ -365,7 +366,7 @@ namespace GliwickiDzik.API.Controllers
         public async Task<IActionResult> RemoveAllExercises(int userId, int trainingId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized("User is not authorized!");
+                return Unauthorized();
             
             var exercisesToRemove = await _repository.GetAllExercisesForTrainingAsync(trainingId);
 
@@ -379,6 +380,7 @@ namespace GliwickiDzik.API.Controllers
             
             throw new Exception("Error: Removing exercises from database failed!");    
         }
+
         #endregion
     }
 }

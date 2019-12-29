@@ -32,10 +32,10 @@ namespace GliwickiDzik.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetUser", Name = "GetUser")]
-        public async Task<IActionResult> GetUser(int userId)
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetOneUserAsync(int userId)
         {
-            var userForGet = await _repository.GetUserByIdAsync(userId);
+            var userForGet = await _repository.GetOneUserAsync(userId);
 
             if (userForGet == null)
                 return BadRequest("The user cannot be found!");
@@ -48,7 +48,7 @@ namespace GliwickiDzik.Controllers
         [HttpGet("GetUsers")]
         public async Task<IActionResult> GetUsersForRecordsAsync([FromQuery]UserParams userParams)
         {
-            var usersToList = await _repository.GetUsersForRecords(userParams);
+            var usersToList = await _repository.GetAllUsersForRecords(userParams);
 
             if (usersToList == null)
                 return BadRequest("Users cannot be found!");
@@ -66,11 +66,11 @@ namespace GliwickiDzik.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userForEdit = await _repository.GetUserByIdAsync(userId);
+            var userForEdit = await _repository.GetOneUserAsync(userId);
 
             _mapper.Map(userForEditDTO, userForEdit);
 
-            if (await _repository.SaveAllUsers())
+            if (await _repository.SaveAllUserContent())
                 return NoContent();
             
             throw new Exception("Error occured while trying to save in database");
@@ -82,11 +82,11 @@ namespace GliwickiDzik.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var userToDelete = await _repository.GetUserByIdAsync(userId);
+            var userToDelete = await _repository.GetOneUserAsync(userId);
             
             _repository.Remove(userToDelete);
 
-            if (await _repository.SaveAllUsers())
+            if (await _repository.SaveAllUserContent())
                 return NoContent();
             
             throw new Exception("Error occured while trying to save in database");
@@ -116,14 +116,14 @@ namespace GliwickiDzik.Controllers
 
             trainingPlanToLike.LikeCounter++;
 
-            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUsers())
+            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUserContent())
                 return NoContent();
 
             throw new Exception("Errorc occured while trying save changes to database!");
         }
 
         [HttpPost("DeleteLike/{trainingPlanId}")]
-        public async Task<IActionResult> DislikeUserAsync(int userId, int trainingPlanId)
+        public async Task<IActionResult> RemovelikeUserAsync(int userId, int trainingPlanId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -142,7 +142,7 @@ namespace GliwickiDzik.Controllers
 
             trainingPlanToDislike.LikeCounter--;
 
-            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUsers())
+            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUserContent())
                 return NoContent();
                 
             throw new Exception("Errorc occured while trying save changes to database!");

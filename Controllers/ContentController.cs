@@ -72,7 +72,7 @@ namespace GliwickiDzik.API.Controllers
             
             messageForCreateDTO.SenderId = userId;
 
-            var recipient = await _userRepository.GetUserByIdAsync(messageForCreateDTO.RecipientId);
+            var recipient = await _userRepository.GetOneUserAsync(messageForCreateDTO.RecipientId);
 
             if (recipient == null)
                 return BadRequest("User cannot be found!");

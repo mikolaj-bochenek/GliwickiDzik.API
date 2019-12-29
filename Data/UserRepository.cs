@@ -20,27 +20,17 @@ namespace GliwickiDzik.API.Data
         {
             _context = context;
         }
+
+        #region = "USER"
         public void Add(UserModel entity)
         {
             _context.UserModel.Add(entity);
         }
-
         public void AddRange(IEnumerable<UserModel> entities)
         {
             throw new NotImplementedException();
         }
-
-        public Task<IEnumerable<UserModel>> FindAsync(Expression<Func<UserModel, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<UserModel>> GetAllUsersAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PagedList<UserModel>> GetUsersForRecords(UserParams userParams)
+        public async Task<PagedList<UserModel>> GetAllUsersForRecords(UserParams userParams)
         {
             var users = _context.UserModel.OrderByDescending(u => u.BicepsSize);
 
@@ -63,30 +53,44 @@ namespace GliwickiDzik.API.Data
             }
             return await PagedList<UserModel>.CreateListAsync(users, userParams.PageSize, userParams.PageNumber);
         }
-        public async Task<UserModel> GetUserByIdAsync(int id)
+        public async Task<UserModel> GetOneUserAsync(int userId)
         {
-            return await _context.UserModel.FirstOrDefaultAsync(u => u.UserId == id);
+            return await _context.UserModel.FirstOrDefaultAsync(u => u.UserId == userId);
         }
-
         public void Remove(UserModel entity)
         {
             _context.UserModel.Remove(entity);
+        }
+        public void RemoveRange(IEnumerable<UserModel> entities)
+        {
+            throw new NotImplementedException();
+        }
+        
+        #endregion
+
+
+        #region = "LIKE"
+
+        public void Add(LikeModel entity)
+        {
+            _context.LikeModel.Add(entity);
+        }
+        public void AddRange(IEnumerable<LikeModel> entities)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<LikeModel> GetLikeAsync(int userId, int trainingPlanId)
+        {
+            return await _context.LikeModel.FirstOrDefaultAsync(l => l.UserIdLikesPlanId == userId && l.PlanIdIsLikedByUserId == trainingPlanId);
         }
         public void Remove(LikeModel entity)
         {
             _context.LikeModel.Remove(entity);
         }
-
-        public void RemoveRange(IEnumerable<UserModel> entities)
+        public void RemoveRange(IEnumerable<LikeModel> entities)
         {
             throw new NotImplementedException();
         }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
-
         public async Task<bool> IsLikedAsync(int userId, int trainingPlanId)
         {
             var isLike = await _context.LikeModel.FirstOrDefaultAsync(u => u.UserIdLikesPlanId == userId && u.PlanIdIsLikedByUserId == trainingPlanId);
@@ -96,36 +100,20 @@ namespace GliwickiDzik.API.Data
             
             return false;
         }
-        public async Task<bool> SaveAllUsers()
+
+        #endregion
+        
+        public async Task<bool> SaveAllUserContent()
         {
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public Task<IEnumerable<LikeModel>> FindAsync(Expression<Func<LikeModel, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Add(LikeModel entity)
-        {
-            _context.LikeModel.Add(entity);
-        }
-
-        public void AddRange(IEnumerable<LikeModel> entities)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         
 
-        public void RemoveRange(IEnumerable<LikeModel> entities)
-        {
-            throw new NotImplementedException();
-        }
+        
 
-        public async  Task<LikeModel> GetLikeAsync(int userId, int trainingPlanId)
-        {
-            return await _context.LikeModel.FirstOrDefaultAsync(l => l.UserIdLikesPlanId == userId && l.PlanIdIsLikedByUserId == trainingPlanId);
-        }
+        
     }
 }
