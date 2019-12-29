@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using System.Collections.Generic;
 using System;
 using System.Security.Claims;
@@ -65,7 +66,7 @@ namespace GliwickiDzik.API.Controllers
         }
         
         [HttpPost("AddMessage")]
-        public async Task<IActionResult> CreateMessageAsync(int userId, MessageForCreateDTO messageForCreateDTO)
+        public async Task<IActionResult> AddMessageAsync(int userId, MessageForCreateDTO messageForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -90,7 +91,7 @@ namespace GliwickiDzik.API.Controllers
             return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, createdMessage);
         }
         
-        [HttpDelete("DeleteMessage/{messageId}")]
+        [HttpDelete("RemoveMessage/{messageId}")]
         public async Task<IActionResult> RemoveMessageAsync(int userId, int messageId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -115,6 +116,41 @@ namespace GliwickiDzik.API.Controllers
             return NoContent();
         }
         
+        [HttpDelete("RemoveMessageThread/{recipientId}")]
+        public async Task<IActionResult> RemoveMessageThreadAsync(int userId, int recipientId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var messages = await _repository.GetMessageThreadAsync(userId, recipientId);
+
+            if (messages == null)
+                return NoContent();
+
+            var messagesToDelete = new List<MessageModel>();
+
+            foreach(var message in messages)
+            {
+                if (message.SenderId == userId)
+                    message.SenderDeleted = true;
+
+                if (message.RecipientId == userId)
+                    message.RecipientDeleted = true;
+                
+                if (message.SenderDeleted == true && message.RecipientDeleted == true)
+                    messagesToDelete.Add(message);
+            }
+
+            _repository.RemoveRange(messagesToDelete);
+
+            messagesToDelete = null;
+
+            if (await _repository.SaveContentAsync())
+                return NoContent();
+            
+            throw new Exception("Error: Removing messages from database failed!");
+        }
+
         [HttpPost("{messageId}/IsRead")]
         public async Task<IActionResult> SetMessageIsReadAsync(int userId, int messageId)
         {
@@ -168,7 +204,7 @@ namespace GliwickiDzik.API.Controllers
         }
 
         [HttpPost("AddComment/{planId}")]
-        public async Task<IActionResult> CreateCommentAsync(int userId, int trainingPlanId, CommentForCreateDTO commentForCreateDTO)
+        public async Task<IActionResult> AddCommentAsync(int userId, int trainingPlanId, CommentForCreateDTO commentForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -209,7 +245,7 @@ namespace GliwickiDzik.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("DeleteComment/{commentId}")]
+        [HttpDelete("RemoveComment/{commentId}")]
         public async Task<IActionResult> RemoveCommentAsync(int userId, int commentId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))

@@ -83,7 +83,7 @@ namespace GliwickiDzik.API.Controllers
         }
         
         [HttpPost("AddTrainingPlan")]
-        public async Task<IActionResult> CreateTrainingPlan(int userId, TrainingPlanForCreateDTO trainingPlanForCreateDTO)
+        public async Task<IActionResult> AddTrainingPlanAsync(int userId, TrainingPlanForCreateDTO trainingPlanForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -197,7 +197,7 @@ namespace GliwickiDzik.API.Controllers
         }
         
         [HttpPost("AddTraining/{trainingPlanId}")]
-        public async Task<IActionResult> CreateTrainingAsync(int userId, int trainingPlanId, TrainingForCreateDTO trainingForCreateDTO)
+        public async Task<IActionResult> AddTrainingAsync(int userId, int trainingPlanId, TrainingForCreateDTO trainingForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -219,7 +219,7 @@ namespace GliwickiDzik.API.Controllers
         }
 
         [HttpPut("EditTraining/{trainingId}")]
-        public async Task<IActionResult> EditTraining(int userId, int trainingId, TrainingForEditDTO trainingForEditDTO)
+        public async Task<IActionResult> EditTrainingAsync(int userId, int trainingId, TrainingForEditDTO trainingForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -238,7 +238,7 @@ namespace GliwickiDzik.API.Controllers
         }
         
         [HttpDelete("RemoveTraining/{trainingId}")]
-        public async Task<IActionResult> RemoveTraining(int userId, int trainingId)
+        public async Task<IActionResult> RemoveTrainingAsync(int userId, int trainingId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -306,7 +306,7 @@ namespace GliwickiDzik.API.Controllers
         }
 
         [HttpPost("AddExercise/{trainingId}")]
-        public async Task<IActionResult> CreateExersiceForTraining(int userId, int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
+        public async Task<IActionResult> AddExersiceForTrainingAsync(int userId, int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -328,7 +328,7 @@ namespace GliwickiDzik.API.Controllers
         }
 
         [HttpPut("EditExercise/{exerciseId}")]
-        public async Task<IActionResult> EditExerciseForTraining(int userId, int exerciseId, ExerciseForTrainingForEditDTO exerciseForTrainingForEditDTO)
+        public async Task<IActionResult> EditExerciseForTrainingAsync(int userId, int exerciseId, ExerciseForTrainingForEditDTO exerciseForTrainingForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -344,7 +344,7 @@ namespace GliwickiDzik.API.Controllers
         }
         
         [HttpDelete("RemoveExercise/{exerciseId}")]
-        public async Task<IActionResult> RemoveExerciseForTraining(int userId, int exerciseId)
+        public async Task<IActionResult> RemoveExerciseForTrainingAsync(int userId, int exerciseId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -363,7 +363,7 @@ namespace GliwickiDzik.API.Controllers
         }
         
         [HttpDelete("RemoveExercises/{trainingId}")]
-        public async Task<IActionResult> RemoveAllExercises(int userId, int trainingId)
+        public async Task<IActionResult> RemoveAllExercisesAsync(int userId, int trainingId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();

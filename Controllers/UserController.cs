@@ -79,7 +79,7 @@ namespace GliwickiDzik.Controllers
             throw new Exception("Error: Saving edited user to database failed!");
         }
 
-        [HttpDelete("DeleteUser")]
+        [HttpDelete("RemoveUser")]
         public async Task<IActionResult> RemoveUserAsync(int userId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -99,7 +99,7 @@ namespace GliwickiDzik.Controllers
         }
 
         [HttpPost("AddLike/{trainingPlanId}")]
-        public async Task<IActionResult> CreateLikeAsync(int userId, int trainingPlanId)
+        public async Task<IActionResult> AddLikeAsync(int userId, int trainingPlanId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -128,8 +128,8 @@ namespace GliwickiDzik.Controllers
             throw new Exception("Error: Saving like to database failed!");
         }
 
-        [HttpPost("DeleteLike/{trainingPlanId}")]
-        public async Task<IActionResult> RemovelikeUserAsync(int userId, int trainingPlanId)
+        [HttpDelete("RemoveLike/{trainingPlanId}")]
+        public async Task<IActionResult> RemoveLikeUserAsync(int userId, int trainingPlanId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
