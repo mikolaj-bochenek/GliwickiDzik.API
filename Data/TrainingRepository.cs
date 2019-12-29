@@ -118,9 +118,9 @@ namespace GliwickiDzik.API.Data
                 .FirstOrDefaultAsync(p => p.TrainingPlanId == trainingPlanId);
         }
 
-        public async Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int userId, TrainingPlanParams trainingPlanParams)
+        public async Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int whoseUserId, TrainingPlanParams trainingPlanParams)
         {
-            var trainingPlans = _context.TrainingPlanModel.Where(p => p.UserId == userId).Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
+            var trainingPlans = _context.TrainingPlanModel.Where(p => p.UserId == whoseUserId).Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
 
             if (!string.IsNullOrEmpty(trainingPlanParams.OrderBy))
             {

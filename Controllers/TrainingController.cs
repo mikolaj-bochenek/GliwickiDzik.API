@@ -38,7 +38,7 @@ namespace GliwickiDzik.API.Controllers
             var trainingPlan = await _repository.GetOneTrainingPlanAsync(trainingPlanId);
 
             if (trainingPlan == null)
-                return BadRequest("Error: The training plan cannot be found");
+                return BadRequest("Error: The training plan cannot be found!");
 
             var trainingPlanToReturn = _mapper.Map<TrainingPlanForReturnDTO>(trainingPlan);
 
@@ -50,8 +50,8 @@ namespace GliwickiDzik.API.Controllers
         {
             var trainingPlans = await _repository.GetAllTrainingPlansAsync(trainingPlanParams);
 
-            if (trainingPlans == null)
-                return BadRequest("Error: training plans cannot be found");
+            if (trainingPlans.Count == 0)
+                return NoContent();
 
             var trainingPlansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(trainingPlans);
 
@@ -60,13 +60,18 @@ namespace GliwickiDzik.API.Controllers
             return Ok(trainingPlansToReturn);
         }
 
-        [HttpGet("GetTrainingPlansForUser")]
-        public async Task<IActionResult> GetAllTrainingPlansForUserAsync(int userId, [FromQuery]TrainingPlanParams trainingPlanParams)
+        [HttpGet("GetTrainingPlansForUser/{whoseUserId}")]
+        public async Task<IActionResult> GetAllTrainingPlansForUserAsync(int whoseUserId, [FromQuery]TrainingPlanParams trainingPlanParams)
         {
-            var trainingPlans = await _repository.GetAllTrainingPlansForUserAsync(userId, trainingPlanParams);
+            var user = await _userRepository.GetUserByIdAsync(whoseUserId);
 
-            if (trainingPlans == null)
-                return BadRequest("Training plans cannot be found!");
+            if (user == null)
+                return BadRequest("Error: The user cannot be found!");
+
+            var trainingPlans = await _repository.GetAllTrainingPlansForUserAsync(whoseUserId, trainingPlanParams);
+
+            if (trainingPlans.Count == 0)
+                 return NoContent();
             
             var trainingPlansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(trainingPlans);
 
@@ -95,9 +100,9 @@ namespace GliwickiDzik.API.Controllers
             _repository.Add(trainingPlanForCreate);
 
             if (await _repository.SaveAllTrainingContent())
-                return NoContent();
+                return StatusCode(201);
 
-            throw new Exception("Error occured while trying to save in database");
+            throw new Exception("Error: Saving training plan to database failed!");
         }
 
         [HttpPut("EditTrainingPlan/{trainingPlanId}")]
@@ -116,31 +121,30 @@ namespace GliwickiDzik.API.Controllers
 
             var editedTrainingPlan = _mapper.Map(trainingPlanForEditDTO, trainingPlan);
 
-            if (!await _repository.SaveAllTrainingContent())
-                throw new Exception("Error occured while trying to save in database");
+            if (await _repository.SaveAllTrainingContent())
+                return NoContent();
             
-            return NoContent();
+            throw new Exception("Error: Saving edited training plan to database failed!");
             
         }
         
         [HttpDelete("RemoveTrainingPlan/{trainingPlanId}")]
-        public async Task<IActionResult> RemoveTrainingPlanAsync(int userId, int trainingPlanId)
-
+        public async Task<IActionResult> RemoveOneTrainingPlanAsync(int userId, int trainingPlanId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userToRemove = await _repository.GetOneTrainingPlanAsync(trainingPlanId);
+            var trainingToRemove = await _repository.GetOneTrainingPlanAsync(trainingPlanId);
 
-            if (userToRemove == null)
-                return BadRequest("Error: Training pplan cannot be found");
+            if (trainingToRemove == null)
+                return BadRequest("Error: Training plan cannot be found!");
 
-            _repository.Remove(userToRemove);
+            _repository.Remove(trainingToRemove);
 
-            if (!await _repository.SaveAllTrainingContent())
-                throw new Exception("Error occured while trying to save in database");
+            if (await _repository.SaveAllTrainingContent())
+                return NoContent();
             
-            return NoContent();
+            throw new Exception("Error: Removing training plan from database failed!");
         }
         
         #endregion
