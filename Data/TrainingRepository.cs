@@ -48,20 +48,7 @@ namespace GliwickiDzik.API.Data
             _context.ExerciseForTrainingModel.AddRange(entities);
         }
 
-        public Task<IEnumerable<TrainingPlanModel>> FindAsync(Expression<Func<TrainingPlanModel, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<TrainingModel>> FindAsync(Expression<Func<TrainingModel, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<ExerciseForTrainingModel>> FindAsync(Expression<Func<ExerciseForTrainingModel, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public async Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync()
         {
@@ -174,10 +161,6 @@ namespace GliwickiDzik.API.Data
             _context.ExerciseForTrainingModel.RemoveRange(entities);
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
 
         public async Task<bool> SaveAllTrainingContent()
         {
