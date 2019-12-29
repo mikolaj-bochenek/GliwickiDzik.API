@@ -14,6 +14,6 @@ namespace GliwickiDzik.API.Data
          Task<IEnumerable<TrainingModel>> GetAllTrainingsAsync();
          Task<ExerciseForTrainingModel> GetExerciseForTrainingAsync(int id);
          Task<IEnumerable<ExerciseForTrainingModel>> GetAllExercisesForTrainingAsync();
-         Task<bool> SaveAllTrainings();
+         Task<bool> SaveAllTrainingContent();
     }
 }

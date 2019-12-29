@@ -94,7 +94,7 @@ namespace GliwickiDzik.API.Controllers
 
             _repository.Add(trainingPlanForCreate);
 
-            if (await _repository.SaveAllTrainings())
+            if (await _repository.SaveAllTrainingContent())
                 return NoContent();
 
             throw new Exception("Error occured while trying to save in database");
@@ -113,7 +113,7 @@ namespace GliwickiDzik.API.Controllers
             
             var editedTrainingPlan = _mapper.Map(trainingPlanForEditDTO, trainingPlan);
 
-            if (!await _repository.SaveAllTrainings())
+            if (!await _repository.SaveAllTrainingContent())
                 throw new Exception("Error occured while trying to save in database");
             
             return NoContent();
@@ -134,7 +134,7 @@ namespace GliwickiDzik.API.Controllers
 
             _repository.Remove(userToRemove);
 
-            if (!await _repository.SaveAllTrainings())
+            if (!await _repository.SaveAllTrainingContent())
                 throw new Exception("Error occured while trying to save in database");
             
             return NoContent();
@@ -184,7 +184,7 @@ namespace GliwickiDzik.API.Controllers
 
             _repository.Add(trainingToCreate);
 
-            if (await _repository.SaveAllTrainings())
+            if (await _repository.SaveAllTrainingContent())
                 return NoContent();
 
             throw new Exception("Error occured while trying to save in database");
@@ -203,7 +203,7 @@ namespace GliwickiDzik.API.Controllers
             
             var editedTraining = _mapper.Map(trainingForEditDTO, training);
 
-            if (!await _repository.SaveAllTrainings())
+            if (!await _repository.SaveAllTrainingContent())
                 throw new Exception("Error occured while trying to save in database");
             
             return NoContent();
@@ -222,7 +222,7 @@ namespace GliwickiDzik.API.Controllers
             
             _repository.Remove(userToDelete);
 
-            if (!await _repository.SaveAllTrainings())
+            if (!await _repository.SaveAllTrainingContent())
                 throw new Exception("Error occured while trying to save in database");
             
             return NoContent();
@@ -272,7 +272,7 @@ namespace GliwickiDzik.API.Controllers
 
             _repository.Add(exericeToCreate);
 
-            if (await _repository.SaveAllTrainings())
+            if (await _repository.SaveAllTrainingContent())
                 return NoContent();
 
             throw new Exception("Error occured while trying to save in database");
@@ -288,7 +288,7 @@ namespace GliwickiDzik.API.Controllers
 
             var editedExercise = _mapper.Map(exerciseForTrainingForEditDTO, exercise);
 
-            if (!await _repository.SaveAllTrainings())
+            if (!await _repository.SaveAllTrainingContent())
                 throw new Exception("Error occured while trying to save in database");
             
             return NoContent();
@@ -307,7 +307,7 @@ namespace GliwickiDzik.API.Controllers
             
             _repository.Remove(exerciseToDelete);
 
-            if (!await _repository.SaveAllTrainings())
+            if (!await _repository.SaveAllTrainingContent())
                 throw new Exception("Error occured while trying to save in database");
             
             return NoContent();

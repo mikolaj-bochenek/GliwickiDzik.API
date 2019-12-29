@@ -116,7 +116,7 @@ namespace GliwickiDzik.Controllers
 
             trainingPlanToLike.LikeCounter++;
 
-            if (await _trainingRepository.SaveAllTrainings() && await _repository.SaveAllUsers())
+            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUsers())
                 return NoContent();
 
             throw new Exception("Errorc occured while trying save changes to database!");
@@ -142,7 +142,7 @@ namespace GliwickiDzik.Controllers
 
             trainingPlanToDislike.LikeCounter--;
 
-            if (await _trainingRepository.SaveAllTrainings() && await _repository.SaveAllUsers())
+            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUsers())
                 return NoContent();
                 
             throw new Exception("Errorc occured while trying save changes to database!");

@@ -179,7 +179,7 @@ namespace GliwickiDzik.API.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> SaveAllTrainings()
+        public async Task<bool> SaveAllTrainingContent()
         {
             return await _context.SaveChangesAsync() > 0;
         }
