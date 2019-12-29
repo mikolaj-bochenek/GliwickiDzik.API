@@ -273,7 +273,7 @@ namespace GliwickiDzik.API.Controllers
             
             throw new Exception("Error: Removing trainings to dabasae failed!");
         }
-        
+
         #endregion
 
         #region  = "EXERCISE FOR TRAINING"
@@ -292,12 +292,12 @@ namespace GliwickiDzik.API.Controllers
         }
         
         [HttpGet("GetExercises/{trainingId}")]
-        public async Task<IActionResult> GetAllExercisesAsync(int trainingId)
+        public async Task<IActionResult> GetAllExercisesForTrainingAsync(int trainingId)
         {
             var exercises = await _repository.GetAllExercisesForTrainingAsync(trainingId);
 
             if (exercises == null)
-                return BadRequest("Training doesn't contain any exercises");
+                return NoContent();
 
             var exercisesToReturn = _mapper.Map<IEnumerable<ExerciseForTrainingForReturnDTO>>(exercises);
 
@@ -310,8 +310,10 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            if (exerciseForTrainingForCreateDTO == null)
-                return BadRequest("Object cannot be null!");
+            var training = await _repository.GetOneTrainingAsync(trainingId);
+
+            if (training == null)
+                return BadRequest("Error: Training cannot be found!");
 
             var exericeToCreate = _mapper.Map<ExerciseForTrainingModel>(exerciseForTrainingForCreateDTO);
             exericeToCreate.TrainingId = trainingId;
@@ -321,7 +323,7 @@ namespace GliwickiDzik.API.Controllers
             if (await _repository.SaveAllTrainingContent())
                 return NoContent();
 
-            throw new Exception("Error occured while trying to save in database");
+            throw new Exception("Error: Saving exercise to database failed!");
         }
 
         [HttpPut("EditExercise/{exerciseId}")]
@@ -335,7 +337,7 @@ namespace GliwickiDzik.API.Controllers
             var editedExercise = _mapper.Map(exerciseForTrainingForEditDTO, exercise);
 
             if (!await _repository.SaveAllTrainingContent())
-                throw new Exception("Error occured while trying to save in database");
+                throw new Exception("Error: Saving edited exercise to database failed!");
             
             return NoContent();
         }
@@ -353,10 +355,10 @@ namespace GliwickiDzik.API.Controllers
             
             _repository.Remove(exerciseToDelete);
 
-            if (!await _repository.SaveAllTrainingContent())
-                throw new Exception("Error occured while trying to save in database");
+            if (await _repository.SaveAllTrainingContent())
+                return NoContent();
             
-            return NoContent();
+            throw new Exception("Error: Removing exercise from database failed!");
         }
         
         #endregion
