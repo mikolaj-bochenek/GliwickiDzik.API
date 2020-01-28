@@ -88,7 +88,8 @@ namespace GliwickiDzik.API.Controllers
                 throw new Exception("Error: Saving message to database failed!");
             
             //return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, messageToReturn);
-            return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, createdMessage);
+            //return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, createdMessage);
+            return StatusCode(201);
         }
         
         [HttpDelete("RemoveMessage/{messageId}")]
@@ -100,12 +101,25 @@ namespace GliwickiDzik.API.Controllers
             var message = await _repository.GetMessageAsync(messageId);
 
             if (message == null)
-                BadRequest("Error: The message cannot be found!");
+                return BadRequest("Error: The message cannot be found!");
 
             if (message.SenderId == userId)
-                message.SenderDeleted = true;
+            {
+                if (message.SenderDeleted == true)
+                    return BadRequest("The message has been already deleted!");
+                
+                else
+                    message.SenderDeleted = true;
+            }
+            
             if (message.RecipientId == userId)
-                message.RecipientDeleted = true;
+            {
+                if (message.RecipientDeleted == true)
+                    return BadRequest("The message has been already deleted!");
+                
+                else
+                    message.SenderDeleted = true;
+            }
             
             if (message.SenderDeleted == true && message.RecipientDeleted == true)
                 _repository.Remove(message);
@@ -132,11 +146,31 @@ namespace GliwickiDzik.API.Controllers
             foreach(var message in messages)
             {
                 if (message.SenderId == userId)
-                    message.SenderDeleted = true;
+                {
+                    switch(message.SenderDeleted)
+                    {
+                        case true:
+                            break;
 
+                        case false:
+                            message.SenderDeleted = true;
+                            break;
+                    } 
+                }
+                    
                 if (message.RecipientId == userId)
-                    message.RecipientDeleted = true;
-                
+                {
+                    switch(message.RecipientDeleted)
+                    {
+                        case true:
+                            break;
+
+                        case false:
+                            message.RecipientDeleted = true;
+                            break;
+                    } 
+                }
+                               
                 if (message.SenderDeleted == true && message.RecipientDeleted == true)
                     messagesToDelete.Add(message);
             }

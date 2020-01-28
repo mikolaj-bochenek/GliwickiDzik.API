@@ -92,8 +92,8 @@ namespace GliwickiDzik.API.Data
         public async Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId)
         {
             return await _context.MessageModel
-                .Include(s => s.SenderId == userId)
-                .Include(r => r.RecipientId == recipientId)
+                //.Include(s => s.SenderId == userId)
+                //.Include(r => r.RecipientId == recipientId)
                 .Where(m => m.RecipientId == userId && m.SenderId == recipientId && m.RecipientDeleted == false
                          || m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted == false)
                 .OrderByDescending(m => m.DateOfSent).ToListAsync();
@@ -111,22 +111,17 @@ namespace GliwickiDzik.API.Data
 
         public void RemoveRange(IEnumerable<MessageModel> entities)
         {
-            throw new NotImplementedException();
+            _context.RemoveRange(entities);
         }
 
         public void RemoveRange(IEnumerable<CommentModel> entities)
         {
-            throw new NotImplementedException();
+            _context.RemoveRange(entities);
         }
 
-        public Task<bool> SaveAllAsync()
+        public async Task<bool> SaveContentAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> SaveContentAsync()
-        {
-            throw new NotImplementedException();
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

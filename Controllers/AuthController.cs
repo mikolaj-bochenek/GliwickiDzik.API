@@ -47,6 +47,7 @@ namespace GliwickiDzik.Controllers
             var newToken = TokenGenerator(userToCreate).ToString();
 
             return Created(newToken, userToUse);
+
         }
 
         [HttpPost("Login")]
