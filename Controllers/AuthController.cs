@@ -1,3 +1,4 @@
+using System.Net;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -44,9 +45,13 @@ namespace GliwickiDzik.Controllers
 
             var userToUse = _mapper.Map<UserForReturnDTO>(createdUser);
 
-            var newToken = TokenGenerator(userToCreate).ToString();
+            var newToken = TokenGenerator(userToCreate);
 
-            return Created(newToken, userToUse);
+            return Ok(new 
+            {
+                newToken,
+                userToUse
+            });
 
         }
 
@@ -60,7 +65,7 @@ namespace GliwickiDzik.Controllers
             
             var userToUse = _mapper.Map<UserForReturnDTO>(userToLogin);
 
-            var newToken = TokenGenerator(userToLogin).ToString();
+            var newToken = TokenGenerator(userToLogin);
 
             return Ok(new
             {
@@ -69,7 +74,7 @@ namespace GliwickiDzik.Controllers
             });
         }
 
-        private Object TokenGenerator(UserModel userToLogin)
+        private object TokenGenerator(UserModel userToLogin)
         {
             var claims = new[]
             {
