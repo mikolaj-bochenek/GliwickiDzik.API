@@ -48,6 +48,28 @@ namespace GliwickiDzik.API.Controllers
 
             return Ok(messageToReturn);
         }
+
+        [HttpGet("GetAllMessages")]
+        public async Task<IActionResult> GetMessagesForUser(int userId, [FromQuery]MessageParams messageParams)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            messageParams.UserId = userId;
+
+            var messagesFromRepo = await _repository.GetMessagesForUserAsync(messageParams);
+
+            var messagesToReturn = _mapper.Map<IEnumerable<MessageForReturnDTO>>(messagesFromRepo);
+
+            Response.AddPagination(messagesFromRepo.CurrentPage, messagesFromRepo.PageSize, messagesFromRepo.TotalCount, messagesFromRepo.TotalPages);
+
+            foreach (var message in messagesToReturn)
+            {
+                message.MessageContainer = messageParams.MessageContainer;
+            }
+
+            return Ok(messagesToReturn);
+        }
         
         [HttpGet("GetMessageThread/{recipientId}")]
         public async Task<IActionResult> GetMessageThreadAsync(int userId, int recipientId)

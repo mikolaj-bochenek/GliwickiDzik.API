@@ -74,9 +74,27 @@ namespace GliwickiDzik.API.Data
             return await PagedList<CommentModel>.CreateListAsync(comments, commentParams.PageSize, commentParams.PageNumber);                               
         }
 
-        public Task<IEnumerable<MessageModel>> GetAllMessagesAsync()
+        public async Task<PagedList<MessageModel>> GetMessagesForUserAsync(MessageParams messageParams)
         {
-            throw new NotImplementedException();
+            var messages = _context.MessageModel.Include(u => u.Sender)
+                                            .Include(u => u.Recipient).AsQueryable();
+            
+            switch (messageParams.MessageContainer)
+            {
+                case "Inbox" :
+                    messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.RecipientDeleted == false);
+                    break;
+                case "Outbox" :
+                    messages = messages.Where(u => u.SenderId == messageParams.UserId && u.SenderDeleted == false);
+                    break;
+                default :
+                    messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.IsRead == false && u.RecipientDeleted == false);
+                    break;
+            }
+
+            messages = messages.OrderByDescending(d => d.DateOfSent);
+
+            return await PagedList<MessageModel>.CreateListAsync(messages, messageParams.PageNumber, messageParams.PageSize);
         }
 
         public async Task<CommentModel> GetCommentAsync(int commentId)
@@ -123,5 +141,6 @@ namespace GliwickiDzik.API.Data
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
     }
 }
