@@ -33,7 +33,7 @@ namespace GliwickiDzik.API.Controllers
 
         #region = "MESSAGES"
 
-        [HttpGet("GetMessage/{messageId}", Name="GetMessage")]
+        [HttpGet("GetMessage/{messageId}")]
         public async Task<IActionResult> GetMessageAsync(int userId, int messageId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))

@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using GliwickiDzik.API.Helpers;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace GliwickiDzik
 {
@@ -45,6 +46,10 @@ namespace GliwickiDzik
             {
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+            // Only the local user account can decrypt the keys
+    // services.AddDataProtection()
+    //     .ProtectKeysWithDpapiNG();
+
             services.AddAutoMapper();
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IAuthRepository, AuthRepository>();
@@ -64,6 +69,7 @@ namespace GliwickiDzik
                             //.AllowCredentials();
                 });
             });
+            services.AddTransient<Seed>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(option =>
                     {
@@ -79,7 +85,7 @@ namespace GliwickiDzik
         }      
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Seed seeder)
         {
             if (env.IsDevelopment())
             {
@@ -102,6 +108,7 @@ namespace GliwickiDzik
                 });
             }
             //app.UseDefaultFiles();
+            //seeder.SeedData();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
