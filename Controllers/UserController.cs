@@ -59,6 +59,18 @@ namespace GliwickiDzik.Controllers
 
             return Ok(listedUsers);
         }
+        [HttpGet("GetConvUsers")]
+        public async Task<IActionResult> GetConvUsersAsync(int userId)
+        {
+            var users = await _repository.GetConvUsersAsync(userId);
+
+            if (users == null)
+                return NoContent();
+            
+            var listedUsers = _mapper.Map<IEnumerable<UserToConvDTO>>(users);
+
+            return Ok(listedUsers);
+        }
 
         [HttpPut("EditUser")]
         public async Task<IActionResult> EditUserAsync(int userId, UserForEditDTO userForEditDTO)

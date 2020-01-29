@@ -23,6 +23,8 @@ namespace GliwickiDzik.API.Helpers
                     opt.ResolveUsing(src => src.DateOfBirth.CalculateAge());
                 });
             CreateMap<UserForRegisterDTO, UserForLoginDTO>();
+
+            CreateMap<UserModel, UserToConvDTO>();
             
             CreateMap<ExerciseForTrainingForCreateDTO, ExerciseForTrainingModel>();
             CreateMap<ExerciseForTrainingForEditDTO, ExerciseForTrainingModel >();

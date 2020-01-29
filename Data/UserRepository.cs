@@ -108,12 +108,20 @@ namespace GliwickiDzik.API.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
-        
-
-        
-
-        
-
-        
+        public async Task<IEnumerable<UserModel>> GetConvUsersAsync(int userId)
+        {
+            var user = await _context.UserModel.FirstOrDefaultAsync(u => u.UserId == userId);
+            var convList = user.Conversation;
+            
+            var listOfUsers = new List<UserModel>();
+            
+            foreach (var item in convList)
+            {
+                var userToList = await _context.UserModel.FirstOrDefaultAsync(u => u.UserId == item);
+                listOfUsers.Add(userToList);
+            }
+            
+            return listOfUsers;
+        }
     }
 }
