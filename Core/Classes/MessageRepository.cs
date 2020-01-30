@@ -44,22 +44,31 @@ namespace GliwickiDzik.API.Data
             var messages = await _dataContext.MessageModel.Where(m => m.SenderId == userId || m.RecipientId == userId)
                 .OrderByDescending(m => m.DateOfSent).ToListAsync();
 
+            var listOfUsersId = new List<int>();
             var listOfUsers = new List<UserModel>();
 
             foreach (var item in messages)
             {
                 if (item.SenderId == userId)
                 {
-                    if (!listOfUsers.Contains(item.Recipient))
-                        listOfUsers.Add(item.Recipient);
+                    if (!listOfUsersId.Contains(item.RecipientId))
+                        listOfUsersId.Add(item.RecipientId);
                 }
                 
                 if (item.RecipientId == userId)
                 {
-                    if (!listOfUsers.Contains(item.Sender))
-                        listOfUsers.Add(item.Sender);
+                    if (!listOfUsersId.Contains(item.SenderId))
+                        listOfUsersId.Add(item.SenderId);
                 }
             }
+            if (listOfUsersId == null)
+                throw new Exception("EMPTY");
+            
+            foreach (var elem in listOfUsersId)
+            {
+                listOfUsers.Add(await _dataContext.UserModel.FirstOrDefaultAsync(u => u.UserId == elem));
+            }
+
             return listOfUsers;
         }
 
