@@ -74,48 +74,16 @@ namespace GliwickiDzik.API.Data
             return await PagedList<CommentModel>.CreateListAsync(comments, commentParams.PageSize, commentParams.PageNumber);                               
         }
 
-        public async Task<PagedList<MessageModel>> GetMessagesForUserAsync(MessageParams messageParams)
-        {
-            var messages = _context.MessageModel.Include(u => u.Sender)
-                                            .Include(u => u.Recipient).AsQueryable();
-            
-            switch (messageParams.MessageContainer)
-            {
-                case "Inbox" :
-                    messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.RecipientDeleted == false);
-                    break;
-                case "Outbox" :
-                    messages = messages.Where(u => u.SenderId == messageParams.UserId && u.SenderDeleted == false);
-                    break;
-                default :
-                    messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.IsRead == false && u.RecipientDeleted == false);
-                    break;
-            }
-
-            messages = messages.OrderByDescending(d => d.DateOfSent);
-
-            return await PagedList<MessageModel>.CreateListAsync(messages, messageParams.PageNumber, messageParams.PageSize);
-        }
+        
 
         public async Task<CommentModel> GetCommentAsync(int commentId)
         {
             return await _context.CommentModel.FirstOrDefaultAsync(c => c.CommentId == commentId);
         }
 
-        public async Task<MessageModel> GetMessageAsync(int messageId)
-        {
-            return await _context.MessageModel.FirstOrDefaultAsync(m => m.MessageId == messageId);
-        }
+    
 
-        public async Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId)
-        {
-            return await _context.MessageModel
-                //.Include(s => s.SenderId == userId)
-                //.Include(r => r.RecipientId == recipientId)
-                .Where(m => m.RecipientId == userId && m.SenderId == recipientId && m.RecipientDeleted == false
-                         || m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted == false)
-                .OrderByDescending(m => m.DateOfSent).ToListAsync();
-        }
+        
 
         public void Remove(MessageModel entity)
         {

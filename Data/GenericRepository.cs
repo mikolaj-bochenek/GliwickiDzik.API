@@ -8,7 +8,7 @@ using System;
 
 namespace GliwickiDzik.API.Data
 {
-    public class GenericRepository<T>: IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly DataContext _dataContext;
         public GenericRepository(DataContext context)

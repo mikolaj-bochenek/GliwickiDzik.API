@@ -8,9 +8,7 @@ namespace GliwickiDzik.API.Data
 {
     public interface IContentRepository : IGenericRepository<MessageModel>, IGenericRepository<CommentModel>
     {
-         Task<MessageModel> GetMessageAsync(int messageId);
-         Task<PagedList<MessageModel>> GetMessagesForUserAsync(MessageParams messageParams);
-         Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId);
+         
          Task<CommentModel> GetCommentAsync(int commentId);
          Task<PagedList<CommentModel>> GetAllCommentsAsync(int trainingPlanId, CommentParams commentParams);
          Task<bool> SaveContentAsync();
