@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using GliwickiDzik.API.Core.Classes;
+using GliwickiDzik.API.Core.Interfaces;
 using GliwickiDzik.Data;
 
 namespace GliwickiDzik.API.Data
@@ -17,6 +19,7 @@ namespace GliwickiDzik.API.Data
             Trainings = new TrainingRepository(_dataContext);
             Likes = new LikeRepository(_dataContext);
             Users = new UserRepository(_dataContext);
+            Exes = new ExeRepository(_dataContext);
         }
         public IMessageRepository Messages { get; private set; }
         public ICommentRepository Comments { get; private set; }
@@ -25,6 +28,7 @@ namespace GliwickiDzik.API.Data
         public ITrainingRepository Trainings { get; private set; }
         public ILikeRepository Likes { get; private set; }
         public IUserRepository Users { get; private set; }
+        public IExeRepository Exes { get; private set; }
 
         public async Task<bool> SaveAllAsync()
         {

@@ -59,11 +59,12 @@ namespace GliwickiDzik.API.Controllers
         }
 
         [HttpPost("AddExercise/{trainingId}")]
-        public async Task<IActionResult> AddExersiceForTrainingAsync(int userId, int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
+        public async Task<IActionResult> AddExersiceForTrainingAsync(int userId, int exeId, int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
+            var exercise = _unitOfWork .Exes.GetByIdAsync(exeId);
             var training = await _unitOfWork.Trainings.GetOneTrainingAsync(trainingId);
 
             if (training == null)
