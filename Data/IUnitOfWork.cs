@@ -5,7 +5,8 @@ namespace GliwickiDzik.API.Data
 {
     public interface IUnitOfWork : IDisposable
     {
-         IMessageRepository Messages { get; }
-         Task<bool> SaveAllAsync();
+        ICommentRepository Comments { get; }
+        IMessageRepository Messages { get; }
+        Task<bool> SaveAllAsync();
     }
 }

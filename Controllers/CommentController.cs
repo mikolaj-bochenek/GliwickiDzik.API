@@ -20,13 +20,13 @@ namespace GliwickiDzik.API.Controllers
     [ServiceFilter(typeof(ActionFilter))]
     public class ContentController : ControllerBase
     {
-        private readonly IContentRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public ContentController(IContentRepository repository, IUserRepository userRepository, IMapper mapper)
+        public ContentController(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _mapper = mapper;
         }
@@ -38,7 +38,7 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("GetComment/{commentId}")]
         public async Task<IActionResult> GetCommentAsync(int commentId)
         {
-            var comment = await _repository.GetCommentAsync(commentId);
+            var comment = await _unitOfWork.Comments.GetByIdAsync(commentId);
 
             if (comment == null)
                 return BadRequest("Error: The comment cannot be found!");
@@ -51,7 +51,7 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("GetComments/{trainingPlanId}")]
         public async Task<IActionResult> GetCommentsForTrainingPlanAsync(int trainingPlanId, [FromQuery]CommentParams commentParams)
         {
-            var commentsToList = await _repository.GetAllCommentsAsync(trainingPlanId, commentParams);
+            var commentsToList = await _unitOfWork.Comments.GetAllCommentsAsync(trainingPlanId, commentParams);
 
             if (commentsToList == null)
                 return BadRequest("Error: Comments cannot be found!");
@@ -69,7 +69,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingPlan = await _repository.GetCommentAsync(trainingPlanId);
+            var trainingPlan = await _unitOfWork.TrainingPlans.GetByIdAsync(trainingPlanId);
 
             if (trainingPlan == null)
                 return BadRequest("Error: The training plan cannot be found!");
@@ -78,9 +78,9 @@ namespace GliwickiDzik.API.Controllers
             comment.CommenterId = userId;
             comment.TrainingPlanId = trainingPlanId;
 
-            _repository.Add(comment);
+            _unitOfWork.Comments.Add(comment);
 
-            if (!await _repository.SaveContentAsync())
+            if (!await _unitOfWork.SaveAllAsync())
                 throw new Exception("Error: Saving comment to database failed!");
             
             return NoContent();
@@ -92,14 +92,14 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var commentToEdit = await _repository.GetCommentAsync(commentId);
+            var commentToEdit = await _unitOfWork.Comments.GetByIdAsync(commentId);
 
             if ( commentToEdit == null)
                 return BadRequest("The comment cannot be found!");
             
             var editedComment = _mapper.Map(commentToEdit, commentForEditDTO);
 
-            if (!await _repository.SaveContentAsync())
+            if (!await _unitOfWork.SaveAllAsync())
                 throw new Exception("Error: Saving edited comment to database failed!");
             
             return NoContent();
@@ -111,7 +111,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var commentToDelete = await _repository.GetCommentAsync(commentId);
+            var commentToDelete = await _unitOfWork.Comments.GetByIdAsync(commentId);
 
             if (commentToDelete == null)
                 return BadRequest("The comment cannnot be found!");
@@ -119,9 +119,9 @@ namespace GliwickiDzik.API.Controllers
             if (userId != commentToDelete.CommenterId)
                 return Unauthorized();
 
-            _repository.Remove(commentToDelete);
+            _unitOfWork.Comments.Remove(commentToDelete);
 
-            if (await _repository.SaveContentAsync())
+            if (await _unitOfWork.SaveAllAsync())
                 return NoContent();
 
             throw new Exception("Error: Removing comment from database failed!");   

@@ -11,8 +11,10 @@ namespace GliwickiDzik.API.Data
         {
             _dataContext = dataContext;
             Messages = new MessageRepository(_dataContext);
+            Comments = new CommentRepository(_dataContext);
         }
         public IMessageRepository Messages { get; private set; }
+        public ICommentRepository Comments { get; private set; }
 
         public async Task<bool> SaveAllAsync()
         {
