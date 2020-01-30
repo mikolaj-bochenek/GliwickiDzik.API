@@ -18,10 +18,15 @@ namespace GliwickiDzik.API.Data
             _dataContext = dataContext;
         }
 
+        public bool SaveAll()
+        {
+            var result = _dataContext.SaveChanges() > 0;
+            return result;
+        }
         public void SeedData()
         {
-            var userData = File.ReadAllText("Data/UserSeedData.json");
-            var users = JsonConvert.DeserializeObject<List<UserModel>>(userData);
+            //var userData = File.ReadAllText("Data/UserSeedData.json");
+            //var users = JsonConvert.DeserializeObject<List<UserModel>>(userData);
 
             //var trainingPlanData = File.ReadAllText("Data/TrainingPlanSeedData.json");
             //var trainingPlans = JsonConvert.DeserializeObject<List<TrainingPlanModel>>(trainingPlanData);
@@ -29,22 +34,24 @@ namespace GliwickiDzik.API.Data
             //var trainingData = File.ReadAllText("Data/TrainingSeedData.json");
             //var trainings = JsonConvert.DeserializeObject<List<TrainingModel>>(trainingData);
 
-            //var exerciseData = File.ReadAllText("Data/ExerciseSeedData.json");
-            //var exercises = JsonConvert.DeserializeObject<List<ExerciseForTrainingModel>>(exerciseData);
+            var exerciseData = File.ReadAllText("Data/ExerciseSeedData.json");
+            var exercises = JsonConvert.DeserializeObject<List<ExerciseModel>>(exerciseData);
 
-            foreach (var user in users)
-            {
-                byte[] passwordHash, passwordSalt;
+            // foreach (var user in users)
+            // {
+            //     byte[] passwordHash, passwordSalt;
 
-                GetPasswordHashAndSalt("password", out passwordHash, out passwordSalt);
+            //     GetPasswordHashAndSalt("password", out passwordHash, out passwordSalt);
 
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-                user.Username = user.Username.ToLower();
+            //     user.PasswordHash = passwordHash;
+            //     user.PasswordSalt = passwordSalt;
+            //     user.Username = user.Username.ToLower();
 
-                _dataContext.UserModel.Add(user);
-            }
-            _dataContext.SaveChanges();
+            //     _dataContext.UserModel.Add(user);
+            // }
+            _dataContext.ExerciseModel.AddRange(exercises);
+            if (!SaveAll())
+                throw new System.Exception("SAVING FAILED");
         }
         private void GetPasswordHashAndSalt(string password, out byte[] passwordHash, out byte[] passwordSalt) 
         {

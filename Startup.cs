@@ -109,7 +109,8 @@ namespace GliwickiDzik
                     });
                 });
             }
-            //seeder.SeedData();
+            seeder.SeedData();
+
             app.UseStaticFiles();
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
