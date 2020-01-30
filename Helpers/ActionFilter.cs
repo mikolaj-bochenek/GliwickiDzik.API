@@ -10,6 +10,11 @@ namespace GliwickiDzik.API.Helpers
 {
     public class ActionFilter : IAsyncActionFilter
     {
+        private readonly IUnitOfWork _unitOfWork;
+        public ActionFilter(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var resultContext = await next();
@@ -22,7 +27,7 @@ namespace GliwickiDzik.API.Helpers
 
             user.LastActive = DateTime.Now;
 
-            await repository.SaveAllUserContent();
+            await _unitOfWork.SaveAllAsync();
         }
     }
 }

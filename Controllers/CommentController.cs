@@ -69,7 +69,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingPlan = await _unitOfWork.TrainingPlans.GetByIdAsync(trainingPlanId);
+            var trainingPlan = await _unitOfWork.Plans.GetByIdAsync(trainingPlanId);
 
             if (trainingPlan == null)
                 return BadRequest("Error: The training plan cannot be found!");

@@ -41,22 +41,24 @@ namespace GliwickiDzik
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<DataContext>(x =>
             {
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-            // Only the local user account can decrypt the keys
-    // services.AddDataProtection()
-    //     .ProtectKeysWithDpapiNG();
 
             services.AddAutoMapper();
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPlanRepository, PlanRepository>();
             services.AddScoped<ITrainingRepository, TrainingRepository>();
-            services.AddScoped<IContentRepository, ContentRepository>();
+            services.AddScoped<IExerciseRepository, ExerciseRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<ILikeRepository, LikeRepository>();
+
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
@@ -107,14 +109,12 @@ namespace GliwickiDzik
                     });
                 });
             }
-            //app.UseDefaultFiles();
             //seeder.SeedData();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseMvc();
             app.UseEndpoints(endpoints =>
                  {
                     endpoints.MapControllerRoute(

@@ -12,9 +12,19 @@ namespace GliwickiDzik.API.Data
             _dataContext = dataContext;
             Messages = new MessageRepository(_dataContext);
             Comments = new CommentRepository(_dataContext);
+            Plans = new PlanRepository(_dataContext);
+            Exercises = new ExerciseRepository(_dataContext);
+            Trainings = new TrainingRepository(_dataContext);
+            Likes = new LikeRepository(_dataContext);
+            Users = new UserRepository(_dataContext);
         }
         public IMessageRepository Messages { get; private set; }
         public ICommentRepository Comments { get; private set; }
+        public IPlanRepository Plans { get; private set; }
+        public IExerciseRepository Exercises { get; private set; }
+        public ITrainingRepository Trainings { get; private set; }
+        public ILikeRepository Likes { get; private set; }
+        public IUserRepository Users { get; private set; }
 
         public async Task<bool> SaveAllAsync()
         {

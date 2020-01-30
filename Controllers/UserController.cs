@@ -21,21 +21,19 @@ namespace GliwickiDzik.Controllers
     [ServiceFilter(typeof(ActionFilter))]
     public class UserController: ControllerBase
     {
-        private readonly IUserRepository _repository;
-        private readonly ITrainingRepository _trainingRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UserController(IUserRepository repository, ITrainingRepository trainingRepository, IMapper mapper)
+        public UserController(IUnitOfWork repository, IMapper mapper)
         {
-            _repository = repository;
-            _trainingRepository = trainingRepository;
+            _unitOfWork = repository;
             _mapper = mapper;
         }
 
         [HttpGet("GetUser")]
         public async Task<IActionResult> GetOneUserAsync(int userId)
         {
-            var userForGet = await _repository.GetOneUserAsync(userId);
+            var userForGet = await _unitOfWork.Users.GetOneUserAsync(userId);
 
             if (userForGet == null)
                 return BadRequest("Error: The user cannot be found!");
@@ -48,7 +46,7 @@ namespace GliwickiDzik.Controllers
         [HttpGet("GetUsers")]
         public async Task<IActionResult> GetUsersForRecordsAsync([FromQuery]UserParams userParams)
         {
-            var usersToList = await _repository.GetAllUsersForRecords(userParams);
+            var usersToList = await _unitOfWork.Users.GetAllUsersForRecords(userParams);
 
             if (usersToList.Count == 0)
                 return NoContent();
@@ -62,7 +60,7 @@ namespace GliwickiDzik.Controllers
         [HttpGet("GetConvUsers")]
         public async Task<IActionResult> GetConvUsersAsync(int userId)
         {
-            var users = await _repository.GetConvUsersAsync(userId);
+            var users = await _unitOfWork.Users.GetConvUsersAsync(userId);
 
             if (users == null)
                 return NoContent();
@@ -78,14 +76,14 @@ namespace GliwickiDzik.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userForEdit = await _repository.GetOneUserAsync(userId);
+            var userForEdit = await _unitOfWork.Users.GetByIdAsync(userId);
 
             if (userForEdit == null)
                 return BadRequest("Error: The user cannot be found!");
 
             _mapper.Map(userForEditDTO, userForEdit);
 
-            if (await _repository.SaveAllUserContent())
+            if (await _unitOfWork.SaveAllAsync())
                 return NoContent();
             
             throw new Exception("Error: Saving edited user to database failed!");
@@ -97,73 +95,19 @@ namespace GliwickiDzik.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var userToDelete = await _repository.GetOneUserAsync(userId);
+            var userToDelete = await _unitOfWork.Users.GetByIdAsync(userId);
 
             if (userToDelete == null)
                 return BadRequest("Error: The user cannot be found!");
             
-            _repository.Remove(userToDelete);
+            _unitOfWork.Users.Remove(userToDelete);
 
-            if (await _repository.SaveAllUserContent())
+            if (await _unitOfWork.SaveAllAsync())
                 return NoContent();
             
             throw new Exception("Error: Removing user from database failed!");
         }
 
-        [HttpPost("AddLike/{trainingPlanId}")]
-        public async Task<IActionResult> AddLikeAsync(int userId, int trainingPlanId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized();
-            
-            if (await _repository.IsLikedAsync(userId, trainingPlanId))
-                return BadRequest("You already likes this training plan!");
-            
-            var trainingPlanToLike = await _trainingRepository.GetOneTrainingPlanAsync(trainingPlanId);
-
-            if (trainingPlanToLike == null)
-                return BadRequest("Error: The training plan cannot be found!");
-            
-            var like = new LikeModel
-            {
-                UserIdLikesPlanId = userId,
-                PlanIdIsLikedByUserId = trainingPlanId
-            };
-
-            _repository.Add(like);
-
-            trainingPlanToLike.LikeCounter++;
-
-            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUserContent())
-                return NoContent();
-
-            throw new Exception("Error: Saving like to database failed!");
-        }
-
-        [HttpDelete("RemoveLike/{trainingPlanId}")]
-        public async Task<IActionResult> RemoveLikeUserAsync(int userId, int trainingPlanId)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized();
-            
-            if (!await _repository.IsLikedAsync(userId, trainingPlanId))
-                return BadRequest("Error: Like doesn't exist!");
-
-            var trainingPlanToDislike = await _trainingRepository.GetOneTrainingPlanAsync(trainingPlanId);
-
-            if (trainingPlanToDislike == null)
-                return BadRequest("Error: The training plan cannot be found!");
-
-            var likeToRemove = await _repository.GetLikeAsync(userId, trainingPlanId);
-
-            _repository.Remove(likeToRemove);
-
-            trainingPlanToDislike.LikeCounter--;
-
-            if (await _trainingRepository.SaveAllTrainingContent() && await _repository.SaveAllUserContent())
-                return NoContent();
-                
-            throw new Exception("Error: Removing like from database failed!");
-        }
+        
     }
 }

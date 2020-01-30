@@ -6,13 +6,10 @@ using GliwickiDzik.Models;
 
 namespace GliwickiDzik.API.Data
 {
-    public interface IUserRepository : IGenericRepository<UserModel>, IGenericRepository<LikeModel>
+    public interface IUserRepository : IGenericRepository<UserModel>
     {
          Task<UserModel> GetOneUserAsync(int userId);
          Task<PagedList<UserModel>> GetAllUsersForRecords(UserParams userParams);
          Task<IEnumerable<UserModel>> GetConvUsersAsync(int userId);
-         Task<LikeModel> GetLikeAsync(int userId, int trainingPlanId);
-         Task<bool> IsLikedAsync(int userId, int trainingPlanId);
-         Task<bool> SaveAllUserContent();
     }
 }
