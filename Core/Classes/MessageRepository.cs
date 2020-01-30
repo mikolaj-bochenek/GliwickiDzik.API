@@ -1,3 +1,5 @@
+using System.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +7,7 @@ using GliwickiDzik.API.Helpers;
 using GliwickiDzik.API.Models;
 using GliwickiDzik.Data;
 using Microsoft.EntityFrameworkCore;
+using GliwickiDzik.Models;
 
 namespace GliwickiDzik.API.Data
 {
@@ -34,6 +37,30 @@ namespace GliwickiDzik.API.Data
             messages = messages.OrderByDescending(d => d.DateOfSent);
 
             return await PagedList<MessageModel>.CreateListAsync(messages, messageParams.PageNumber, messageParams.PageSize);
+        }
+        
+        public async Task<IEnumerable<UserModel>> GetConvMessagesAsync(int userId)
+        {
+            var messages = await _dataContext.MessageModel.Where(m => m.SenderId == userId || m.RecipientId == userId)
+                .OrderByDescending(m => m.DateOfSent).ToListAsync();
+
+            var listOfUsers = new List<UserModel>();
+
+            foreach (var item in messages)
+            {
+                if (item.SenderId == userId)
+                {
+                    if (!listOfUsers.Contains(item.Recipient))
+                        listOfUsers.Add(item.Recipient);
+                }
+                
+                if (item.RecipientId == userId)
+                {
+                    if (!listOfUsers.Contains(item.Sender))
+                        listOfUsers.Add(item.Sender);
+                }
+            }
+            return listOfUsers;
         }
 
         public async Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId)

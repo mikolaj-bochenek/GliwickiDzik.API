@@ -44,21 +44,20 @@ namespace GliwickiDzik.API.Data
             return await _dataContext.UserModel.Include(u => u.TrainingPlans)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
-
-        public async Task<IEnumerable<UserModel>> GetConvUsersAsync(int userId)
-        {
-            var user = await _dataContext.UserModel.FirstOrDefaultAsync(u => u.UserId == userId);
-            var convList = user.Conversation;
+        // public async Task<IEnumerable<UserModel>> GetConvUsersAsync(int userId)
+        // {
+        //     var user = await _dataContext.UserModel.FirstOrDefaultAsync(u => u.UserId == userId);
+        //     var convList = user.Conversation;
             
-            var listOfUsers = new List<UserModel>();
+        //     var listOfUsers = new List<UserModel>();
             
-            foreach (var item in convList)
-            {
-                var userToList = await _dataContext.UserModel.FirstOrDefaultAsync(u => u.UserId == item);
-                listOfUsers.Add(userToList);
-            }
+        //     foreach (var item in convList)
+        //     {
+        //         var userToList = await _dataContext.UserModel.FirstOrDefaultAsync(u => u.UserId == item);
+        //         listOfUsers.Add(userToList);
+        //     }
             
-            return listOfUsers;
-        }
+        //     return listOfUsers;
+        // }
     }
 }

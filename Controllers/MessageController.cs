@@ -69,6 +69,23 @@ namespace GliwickiDzik.API.Controllers
 
             return Ok(messagesToReturn);
         }
+
+        [HttpGet("GetConvMessages")]
+        public async Task<IActionResult> GetConvMessages(int userId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var listOfUsers = await _unitOfWork.Messages.GetConvMessagesAsync(userId);
+
+            if (listOfUsers == null)
+                return NoContent();
+            
+            var listToReturn = _mapper.Map<UserToConvDTO>(listOfUsers);
+
+            return Ok(listToReturn);
+        }
+
         
         [HttpGet("GetMessageThread/{recipientId}")]
         public async Task<IActionResult> GetMessageThreadAsync(int userId, int recipientId)
@@ -95,16 +112,16 @@ namespace GliwickiDzik.API.Controllers
             messageForCreateDTO.SenderId = userId;
 
             var recipient = await _userRepository.GetOneUserAsync(messageForCreateDTO.RecipientId);
-            var sender = await _userRepository.GetOneUserAsync(userId);
+            //var sender = await _userRepository.GetOneUserAsync(userId);
 
             if (recipient == null)
                 return BadRequest("Error: The user cannot be found!");
             
-            if(!recipient.Conversation.Contains(userId))
-                recipient.Conversation.Add(userId);
+            // if(!recipient.Conversation.Contains(userId))
+            //     recipient.Conversation.Add(userId);
 
-            if(!sender.Conversation.Contains(messageForCreateDTO.RecipientId))
-                sender.Conversation.Add(messageForCreateDTO.RecipientId);
+            // if(!sender.Conversation.Contains(messageForCreateDTO.RecipientId))
+            //     sender.Conversation.Add(messageForCreateDTO.RecipientId);
             
             var createdMessage = _mapper.Map<MessageModel>(messageForCreateDTO);
 
