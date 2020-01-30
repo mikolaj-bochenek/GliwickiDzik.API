@@ -49,6 +49,7 @@ namespace GliwickiDzik.API.Data
 
             //     _dataContext.UserModel.Add(user);
             // }
+
             _dataContext.ExerciseModel.AddRange(exercises);
             if (!SaveAll())
                 throw new System.Exception("SAVING FAILED");

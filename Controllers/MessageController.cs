@@ -81,7 +81,7 @@ namespace GliwickiDzik.API.Controllers
             if (listOfUsers == null)
                 return NoContent();
             
-            var listToReturn = _mapper.Map<UserToConvDTO>(listOfUsers);
+            var listToReturn = _mapper.Map<IEnumerable<UserToConvDTO>>(listOfUsers);
 
             return Ok(listToReturn);
         }
