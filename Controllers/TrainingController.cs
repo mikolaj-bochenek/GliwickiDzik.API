@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using GliwickiDzik.API.Helpers;
+using GliwickiDzik.Data;
 
 namespace GliwickiDzik.API.Controllers
 {
@@ -17,15 +18,18 @@ namespace GliwickiDzik.API.Controllers
     [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]
-    [ServiceFilter(typeof(ActionFilter))]
+    //[ServiceFilter(typeof(ActionFilter))]
     public class TrainingController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-
-        public TrainingController(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper)
+        private readonly IAuthRepository _repository;
+    private readonly DataContext _context;
+        public TrainingController(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper, DataContext context, IAuthRepository repo)
         {
+            _repository = repo;
+            _context = context;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -56,9 +60,16 @@ namespace GliwickiDzik.API.Controllers
 
             return Ok(trainingsToReturn);
         }
-        
+        [HttpGet("GetTraining")]
+        public async Task<IActionResult> GetOneTraining(int trainingId)
+        {
+            var trainig = await _repository.GetTrainingAsync(trainingId);
+
+            return Ok(trainig);
+        }
+
         [HttpPost("AddTraining/{trainingPlanId}")]
-        public async Task<IActionResult> AddTrainingAsync(int userId, int trainingPlanId, TrainingForCreateDTO trainingForCreateDTO)
+        public async Task<IActionResult> AddTrainingForPlanAsync(int userId, int trainingPlanId, TrainingForCreateDTO trainingForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -72,6 +83,26 @@ namespace GliwickiDzik.API.Controllers
             trainingToCreate.TrainingPlanId = trainingPlanId;
 
             _unitOfWork.Trainings.Add(trainingToCreate);
+
+            if (await _unitOfWork.SaveAllAsync())
+                return StatusCode(201);
+
+            throw new Exception("Error: Saving training to database failed!");
+        }
+
+         [HttpPost("AddTraining")]
+        public async Task<IActionResult> AddTrainingAsync(int userId, [FromBody] List<NewExercise> exercises )//TrainingForCreateDTO trainingForCreateDTO)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var training = new NewTraining();
+            training.Exercises = exercises;
+            training.Name = "lulul";
+            //var trainingToCreate = _mapper.Map<TrainingModel>(trainingForCreateDTO);
+            //trainingToCreate.TrainingPlanId = trainingPlanId;
+
+            _context.NewTraining.Add(training);
 
             if (await _unitOfWork.SaveAllAsync())
                 return StatusCode(201);

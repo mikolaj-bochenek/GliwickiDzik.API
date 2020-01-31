@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GliwickiDzik.Migrations
 {
-    public partial class DbInit : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,6 +20,19 @@ namespace GliwickiDzik.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExerciseModel", x => x.ExerciseId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NewTraining",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NewTraining", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -242,6 +255,35 @@ namespace GliwickiDzik.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "NewExercise",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ExerciseId = table.Column<int>(nullable: false),
+                    Sets = table.Column<int>(nullable: false),
+                    Reps = table.Column<int>(nullable: false),
+                    NewTrainingId = table.Column<int>(nullable: true),
+                    TrainingModelTrainingId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NewExercise", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NewExercise_NewTraining_NewTrainingId",
+                        column: x => x.NewTrainingId,
+                        principalTable: "NewTraining",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_NewExercise_TrainingModel_TrainingModelTrainingId",
+                        column: x => x.TrainingModelTrainingId,
+                        principalTable: "TrainingModel",
+                        principalColumn: "TrainingId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CommentModel_CommenterId",
                 table: "CommentModel",
@@ -283,6 +325,16 @@ namespace GliwickiDzik.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NewExercise_NewTrainingId",
+                table: "NewExercise",
+                column: "NewTrainingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NewExercise_TrainingModelTrainingId",
+                table: "NewExercise",
+                column: "TrainingModelTrainingId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PhotoModel_UserId",
                 table: "PhotoModel",
                 column: "UserId");
@@ -316,7 +368,13 @@ namespace GliwickiDzik.Migrations
                 name: "MessageModel");
 
             migrationBuilder.DropTable(
+                name: "NewExercise");
+
+            migrationBuilder.DropTable(
                 name: "PhotoModel");
+
+            migrationBuilder.DropTable(
+                name: "NewTraining");
 
             migrationBuilder.DropTable(
                 name: "TrainingModel");

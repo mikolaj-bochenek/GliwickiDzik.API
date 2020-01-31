@@ -17,5 +17,6 @@ namespace GliwickiDzik.API.Models
         public TrainingPlanModel TrainingPlan { get; set; }
         public int TrainingPlanId { get; set; }
         public ICollection<ExerciseForTrainingModel> ExercisesForTraining { get; set; }
+        public List<NewExercise> Exercises { get; set; }
     }
 }

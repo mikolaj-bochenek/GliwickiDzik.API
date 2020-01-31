@@ -17,6 +17,7 @@ namespace GliwickiDzik.Data
         public DbSet<TrainingPlanModel> TrainingPlanModel { get; set; }
         public DbSet<TrainingModel> TrainingModel { get; set; }
         public DbSet<LikeModel> LikeModel { get; set; }
+        public DbSet<NewTraining> NewTraining { get; set; }
 
          protected override void OnModelCreating(ModelBuilder builder)
         {

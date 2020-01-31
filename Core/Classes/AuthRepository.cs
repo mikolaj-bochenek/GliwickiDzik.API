@@ -1,5 +1,6 @@
 using System.Text;
 using System.Threading.Tasks;
+using GliwickiDzik.API.Models;
 using GliwickiDzik.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,6 +72,11 @@ namespace GliwickiDzik.Data
                 }
                 return true;
             }
+        }
+
+        public async Task<NewTraining> GetTrainingAsync(int id)
+        {
+            return await _context.NewTraining.Include(x => x.Exercises).FirstOrDefaultAsync();
         }
     }
 }

@@ -155,6 +155,50 @@ namespace GliwickiDzik.Migrations
                     b.ToTable("MessageModel");
                 });
 
+            modelBuilder.Entity("GliwickiDzik.API.Models.NewExercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("NewTrainingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Reps")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Sets")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingModelTrainingId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewTrainingId");
+
+                    b.HasIndex("TrainingModelTrainingId");
+
+                    b.ToTable("NewExercise");
+                });
+
+            modelBuilder.Entity("GliwickiDzik.API.Models.NewTraining", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NewTraining");
+                });
+
             modelBuilder.Entity("GliwickiDzik.API.Models.PhotoModel", b =>
                 {
                     b.Property<int>("PhotoId")
@@ -364,6 +408,17 @@ namespace GliwickiDzik.Migrations
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GliwickiDzik.API.Models.NewExercise", b =>
+                {
+                    b.HasOne("GliwickiDzik.API.Models.NewTraining", null)
+                        .WithMany("Exercises")
+                        .HasForeignKey("NewTrainingId");
+
+                    b.HasOne("GliwickiDzik.API.Models.TrainingModel", null)
+                        .WithMany("Exercises")
+                        .HasForeignKey("TrainingModelTrainingId");
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.PhotoModel", b =>
