@@ -35,7 +35,7 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("{trainingId}")]
         public async Task<IActionResult> GetOneTrainingAsync(int trainingId)
         {
-            var training = await _unitOfWork.Trainings.GetByIdAsync(trainingId);
+            var training = await _unitOfWork.Trainings.FindOneAsync(t => t.TrainingId == trainingId);
 
             if (training == null)
                 return BadRequest("Error: The training cannot be found!");
@@ -83,15 +83,18 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var training = await _unitOfWork.Trainings.GetByIdAsync(trainingId);
+            var training = await _unitOfWork.Trainings.FindOneAsync(t => t.TrainingId == trainingId);
 
             if (training == null)
                 return BadRequest("Error: The trainig cannot be found!");
             
             var editedTraining = _mapper.Map(trainingForEditDTO, training);
 
+            if (training == editedTraining)
+                return StatusCode(304);
+
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: The training has been updated.");
             
             throw new Exception("Error: Saving edited training to database failed");
         }
@@ -110,7 +113,7 @@ namespace GliwickiDzik.API.Controllers
             _unitOfWork.Trainings.Remove(trainingToRemove);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: The training has been deleted.");
                 
             throw new Exception("Error: Removing training from database failed!");
         }
@@ -129,7 +132,7 @@ namespace GliwickiDzik.API.Controllers
             _unitOfWork.Trainings.RemoveRange(trainingsToRemove);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: Trainings have been deleted.");
             
             throw new Exception("Error: Removing trainings to dabasae failed!");
         }
