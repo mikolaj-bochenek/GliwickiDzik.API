@@ -32,7 +32,7 @@ namespace GliwickiDzik.API.Controllers
 
          #region = "MESSAGES"
 
-        [HttpGet("GetMessage/{messageId}")]
+        [HttpGet("{messageId}")]
         public async Task<IActionResult> GetMessageAsync(int userId, int messageId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -103,7 +103,7 @@ namespace GliwickiDzik.API.Controllers
             return Ok(messageThread);
         }
         
-        [HttpPost("AddMessage")]
+        [HttpPost]
         public async Task<IActionResult> AddMessageAsync(int userId, MessageForCreateDTO messageForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))

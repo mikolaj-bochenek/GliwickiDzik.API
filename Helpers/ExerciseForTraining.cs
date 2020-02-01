@@ -1,6 +1,6 @@
-namespace GliwickiDzik.API.Models
+namespace GliwickiDzik.API.Helpers
 {
-    public class NewExercise
+    public class ExerciseForTraining
     {
         public int Id { get; set; }
         public int ExerciseId { get; set; }

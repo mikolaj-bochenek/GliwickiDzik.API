@@ -30,23 +30,57 @@ namespace GliwickiDzik.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetUser")]
-        public async Task<IActionResult> GetOneUserAsync(int userId)
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMeAsync(int userId)
         {
-            var userForGet = await _unitOfWork.Users.GetOneUserAsync(userId);
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var user = await _unitOfWork.Users.GetOneUserAsync(userId);
 
-            if (userForGet == null)
+            if (user == null)
                 return BadRequest("Error: The user cannot be found!");
 
-            var userToReturn = _mapper.Map<UserForReturnDTO>(userForGet);
+            var userToReturn = _mapper.Map<UserForReturnDTO>(user);
 
             return Ok(userToReturn);
         }
-        
-        [HttpGet("GetUsers")]
-        public async Task<IActionResult> GetUsersForRecordsAsync([FromQuery]UserParams userParams)
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOneUserAsync(int userId, int id)
         {
-            var usersToList = await _unitOfWork.Users.GetAllUsersForRecords(userParams);
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var user = await _unitOfWork.Users.GetOneUserAsync(id);
+
+            if (user == null)
+                return BadRequest("Error: The user cannot be found!");
+
+            var userToReturn = _mapper.Map<UserForReturnDTO>(user);
+
+            return Ok(userToReturn);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsersAsync([FromQuery]UserParams userParams)
+        {
+            var users = await _unitOfWork.Users.GetAllUsersAsync(userParams);
+
+            if (users.Count == 0)
+                return NoContent();
+            
+            var usersToReturn = _mapper.Map<IEnumerable<UserForReturnDTO>>(users);
+
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+
+            return Ok(usersToReturn);
+        }
+        
+        [HttpGet("records")]
+        public async Task<IActionResult> GetAllUsersForRecordsAsync([FromQuery]UserParams userParams)
+        {
+            var usersToList = await _unitOfWork.Users.GetAllUsersForRecordsAsync(userParams);
 
             if (usersToList.Count == 0)
                 return NoContent();
@@ -57,31 +91,22 @@ namespace GliwickiDzik.Controllers
 
             return Ok(listedUsers);
         }
-        // [HttpGet("GetConvUsers")]
-        // public async Task<IActionResult> GetConvUsersAsync(int userId)
-        // {
-        //     var users = await _unitOfWork.Users.GetConvUsersAsync(userId);
-
-        //     if (users == null)
-        //         return NoContent();
-            
-        //     var listedUsers = _mapper.Map<IEnumerable<UserToConvDTO>>(users);
-
-        //     return Ok(listedUsers);
-        // }
-
-        [HttpPut("EditUser")]
+        
+        [HttpPut]
         public async Task<IActionResult> EditUserAsync(int userId, UserForEditDTO userForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var userForEdit = await _unitOfWork.Users.GetByIdAsync(userId);
+            var userForEdit = await _unitOfWork.Users.FindOneAsync(u => u.UserId == userId);
 
             if (userForEdit == null)
                 return BadRequest("Error: The user cannot be found!");
 
-            _mapper.Map(userForEditDTO, userForEdit);
+            var editedUser =_mapper.Map(userForEditDTO, userForEdit);
+
+            if (editedUser == userForEdit)
+                return StatusCode(304);
 
             if (await _unitOfWork.SaveAllAsync())
                 return NoContent();
@@ -89,13 +114,13 @@ namespace GliwickiDzik.Controllers
             throw new Exception("Error: Saving edited user to database failed!");
         }
 
-        [HttpDelete("RemoveUser")]
+        [HttpDelete("me")]
         public async Task<IActionResult> RemoveUserAsync(int userId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var userToDelete = await _unitOfWork.Users.GetByIdAsync(userId);
+            var userToDelete = await _unitOfWork.Users.FindOneAsync(u => u.UserId == userId);
 
             if (userToDelete == null)
                 return BadRequest("Error: The user cannot be found!");
@@ -103,11 +128,48 @@ namespace GliwickiDzik.Controllers
             _unitOfWork.Users.Remove(userToDelete);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: You account has been deleted.");
             
             throw new Exception("Error: Removing user from database failed!");
         }
 
+        [HttpDelete("{specifyId}")]
+        public async Task<IActionResult> RemoveSpecyficUserAsync(int userId, int specifyId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var userToDelete = await _unitOfWork.Users.FindOneAsync(u => u.UserId == specifyId);
+
+            if (userToDelete == null)
+                return BadRequest("Error: The user cannot be found!");
+            
+            _unitOfWork.Users.Remove(userToDelete);
+
+            if (await _unitOfWork.SaveAllAsync())
+                return Ok("Info: The user has been deleted.");
+            
+            throw new Exception("Error: Removing user from database failed!");
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> RemoveAllUserAsync(int userId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var usersToDelete = await _unitOfWork.Users.GetAllAsync();
+
+            if (usersToDelete == null)
+                return BadRequest("Error: The user cannot be found!");
+            
+            _unitOfWork.Users.RemoveRange(usersToDelete);
+
+            if (await _unitOfWork.SaveAllAsync())
+                return Ok("Info: Users have been deleted.");
+            
+            throw new Exception("Error: Removing user from database failed!");
+        }
         
     }
 }

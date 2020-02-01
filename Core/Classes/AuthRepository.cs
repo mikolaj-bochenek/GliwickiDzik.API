@@ -73,10 +73,5 @@ namespace GliwickiDzik.Data
                 return true;
             }
         }
-
-        public async Task<NewTraining> GetTrainingAsync(int id)
-        {
-            return await _context.NewTraining.Include(x => x.Exercises).FirstOrDefaultAsync();
-        }
     }
 }

@@ -7,7 +7,6 @@ namespace GliwickiDzik.API.Models
 {
     public class TrainingPlanModel
     {
-        [Key]
         public int TrainingPlanId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

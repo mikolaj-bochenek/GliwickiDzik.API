@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using GliwickiDzik.API.Helpers;
 using GliwickiDzik.Data;
+using GliwickiDzik.API.Helpers.Params;
 
 namespace GliwickiDzik.API.Controllers
 {
@@ -18,71 +19,57 @@ namespace GliwickiDzik.API.Controllers
     [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]
-    //[ServiceFilter(typeof(ActionFilter))]
+    [ServiceFilter(typeof(ActionFilter))]
     public class TrainingController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
-        private readonly IAuthRepository _repository;
-    private readonly DataContext _context;
-        public TrainingController(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper, DataContext context, IAuthRepository repo)
+        
+        public TrainingController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repo;
-            _context = context;
-            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        [HttpGet("GetTraining/{trainingId}")]
+        [AllowAnonymous]
+        [HttpGet("{trainingId}")]
         public async Task<IActionResult> GetOneTrainingAsync(int trainingId)
         {
-            var training = await _unitOfWork.Trainings.GetOneTrainingAsync(trainingId);
+            var training = await _unitOfWork.Trainings.GetByIdAsync(trainingId);
 
             if (training == null)
-                return BadRequest("Error: The training plan cannot be found!");
+                return BadRequest("Error: The training cannot be found!");
 
             var trainingToReturn = _mapper.Map<TrainingForReturnDTO>(training);
 
             return Ok(trainingToReturn);
         }
 
-        [HttpGet("GetTrainings/{trainingPlanId}")]
-        public async Task<IActionResult> GetAllTrainingsForTrainingPlanAsync(int trainingPlanId)
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetAllParametedTrainingsAsync(int userId, [FromQuery]TrainingParams trainingParams)
         {
-            var trainings = await _unitOfWork.Trainings.GetAllTrainingsForTrainingPlanAsync(trainingPlanId);
+            var trainings = await _unitOfWork.Trainings.GetAllParametedTrainingsAsync(userId, trainingParams);
 
-            if (trainings == null)
-                return BadRequest("Error: Trainings cannot be found!");
+            if (trainings.Count == 0)
+                return NoContent();
 
             var trainingsToReturn = _mapper.Map<IEnumerable<TrainingForReturnDTO>>(trainings);
 
             return Ok(trainingsToReturn);
         }
-        [HttpGet("GetTraining")]
-        public async Task<IActionResult> GetOneTraining(int trainingId)
-        {
-            var trainig = await _repository.GetTrainingAsync(trainingId);
 
-            return Ok(trainig);
-        }
-
-        [HttpPost("AddTraining/{trainingPlanId}")]
-        public async Task<IActionResult> AddTrainingForPlanAsync(int userId, int trainingPlanId, TrainingForCreateDTO trainingForCreateDTO)
+        [HttpPost]
+        public async Task<IActionResult> AddTrainingAsync(int userId, [FromBody]TrainingForCreateDTO trainingForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingPlan = await _unitOfWork.Plans.GetOneTrainingPlanAsync(trainingPlanId);
+            var training = new TrainingModel();
+            training = _mapper.Map<TrainingModel>(trainingForCreateDTO);
+            training.OwnerId = userId;
 
-            if (trainingPlan == null)
-                return BadRequest("Error: The training plan cannot be found!");
-
-            var trainingToCreate = _mapper.Map<TrainingModel>(trainingForCreateDTO);
-            trainingToCreate.TrainingPlanId = trainingPlanId;
-
-            _unitOfWork.Trainings.Add(trainingToCreate);
+            _unitOfWork.Trainings.Add(training);
 
             if (await _unitOfWork.SaveAllAsync())
                 return StatusCode(201);
@@ -90,33 +77,13 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error: Saving training to database failed!");
         }
 
-         [HttpPost("AddTraining")]
-        public async Task<IActionResult> AddTrainingAsync(int userId, [FromBody] List<NewExercise> exercises )//TrainingForCreateDTO trainingForCreateDTO)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized();
-            
-            var training = new NewTraining();
-            training.Exercises = exercises;
-            training.Name = "lulul";
-            //var trainingToCreate = _mapper.Map<TrainingModel>(trainingForCreateDTO);
-            //trainingToCreate.TrainingPlanId = trainingPlanId;
-
-            _context.NewTraining.Add(training);
-
-            if (await _unitOfWork.SaveAllAsync())
-                return StatusCode(201);
-
-            throw new Exception("Error: Saving training to database failed!");
-        }
-
-        [HttpPut("EditTraining/{trainingId}")]
+        [HttpPut("{trainingId}")]
         public async Task<IActionResult> EditTrainingAsync(int userId, int trainingId, TrainingForEditDTO trainingForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var training = await _unitOfWork.Trainings.GetOneTrainingAsync(trainingId);
+            var training = await _unitOfWork.Trainings.GetByIdAsync(trainingId);
 
             if (training == null)
                 return BadRequest("Error: The trainig cannot be found!");
@@ -129,13 +96,13 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error: Saving edited training to database failed");
         }
         
-        [HttpDelete("RemoveTraining/{trainingId}")]
+        [HttpDelete("{trainingId}")]
         public async Task<IActionResult> RemoveTrainingAsync(int userId, int trainingId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingToRemove = await _unitOfWork.Trainings.GetOneTrainingAsync(trainingId);
+            var trainingToRemove = await _unitOfWork.Trainings.GetByIdAsync(trainingId);
 
             if (trainingToRemove == null)
                 return BadRequest("Error: The training cannot be found!");
@@ -148,13 +115,13 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error: Removing training from database failed!");
         }
         
-        [HttpDelete("RemoveTrainings/planTrainingId")]
-        public async Task<IActionResult> RemoveAllTrainingsAsync(int userId, int trainingPlanId)
+        [HttpDelete]
+        public async Task<IActionResult> RemoveAllTrainingsAsync(int userId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized("User is not authorized!");
             
-            var trainingsToRemove = await _unitOfWork.Trainings.GetAllTrainingsForTrainingPlanAsync(trainingPlanId);
+            var trainingsToRemove = await _unitOfWork.Trainings.GetAllTrainingsAsync(userId);
 
             if (trainingsToRemove == null)
                 return BadRequest("Training plans cannot be found!");

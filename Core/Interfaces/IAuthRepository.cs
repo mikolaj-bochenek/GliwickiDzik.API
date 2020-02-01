@@ -9,6 +9,5 @@ namespace GliwickiDzik.Data
         Task<UserModel> Login(string username, string password);
         Task<UserModel> Register(UserModel user, string password);
         Task<bool> IsUserExist(string username);
-        Task<NewTraining> GetTrainingAsync(int id);
     }
 }

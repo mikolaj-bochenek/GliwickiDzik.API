@@ -7,7 +7,6 @@ namespace GliwickiDzik.Models
 {
     public class UserModel
     {
-        [Key]
         public int UserId { get; set; }
 
         //For Register

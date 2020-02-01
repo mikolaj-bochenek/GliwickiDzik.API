@@ -1,3 +1,4 @@
+using GliwickiDzik.API.Helpers;
 using GliwickiDzik.API.Models;
 using GliwickiDzik.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +17,17 @@ namespace GliwickiDzik.Data
         public DbSet<TrainingPlanModel> TrainingPlanModel { get; set; }
         public DbSet<TrainingModel> TrainingModel { get; set; }
         public DbSet<LikeModel> LikeModel { get; set; }
-        public DbSet<NewTraining> NewTraining { get; set; }
 
          protected override void OnModelCreating(ModelBuilder builder)
         {   
+            builder.Entity<UserModel>().HasKey(k => k.UserId);
+
+            builder.Entity<TrainingPlanModel>().HasKey(k => k.TrainingPlanId);
+
+            builder.Entity<TrainingModel>().HasKey(k => k.TrainingId);
+            
             builder.Entity<ExerciseModel>().HasKey(k => k.ExerciseId);
+
             builder.Entity<LikeModel>().HasKey(k => new { k.UserIdLikesPlanId, k.PlanIdIsLikedByUserId });
 
             builder.Entity<LikeModel>().HasOne(u => u.PlanIsLiked)
@@ -40,6 +47,8 @@ namespace GliwickiDzik.Data
             builder.Entity<MessageModel>().HasOne(u => u.Recipient)
                                     .WithMany(m => m.MessagesReceived)
                                     .OnDelete(DeleteBehavior.Restrict);
+            
+            //builder.Entity<ExerciseForTraining>().HasNoKey();
         }
 
     }
