@@ -31,7 +31,7 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("{exerciseId}")]
         public async Task<IActionResult> GetExerciseAsync(int exerciseId)
         {
-            var exericse = await _unitOfWork.Exercises.GetByIdAsync(exerciseId);
+            var exericse = await _unitOfWork.Exercises.FindOneAsync(e => e.ExerciseId == exerciseId);
 
             if (exericse == null)
                 return BadRequest("Error: The exercise cannot be found!");
@@ -80,14 +80,17 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var exercise = await _unitOfWork.Exercises.GetByIdAsync(exerciseId);
+            var exercise = await _unitOfWork.Exercises.FindOneAsync(e => e.ExerciseId == exerciseId);
 
             var editedExercise = _mapper.Map(exerciseForCreateDTO, exercise);
 
-            if (!await _unitOfWork.SaveAllAsync())
-                throw new Exception("Error: Saving edited exercise to database failed!");
-            
-            return NoContent();
+            if (exercise == editedExercise)
+                return StatusCode(304);
+
+            if (await _unitOfWork.SaveAllAsync())
+                return Ok("Info: The Exercise has been updated.");
+
+            throw new Exception("Error: Saving edited exercise to database failed!");
         }
         
         [HttpDelete("{exerciseId}")]
@@ -96,7 +99,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var exerciseToDelete = await _unitOfWork.Exercises.GetByIdAsync(exerciseId);
+            var exerciseToDelete = await _unitOfWork.Exercises.FindOneAsync(e => e.ExerciseId == exerciseId);
 
             if (exerciseToDelete == null)
                 return BadRequest("Error: The exercise cannot be found!");
@@ -104,7 +107,7 @@ namespace GliwickiDzik.API.Controllers
             _unitOfWork.Exercises.Remove(exerciseToDelete);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: The excercise has been deleted.");
             
             throw new Exception("Error: Removing exercise from database failed!");
         }
@@ -123,7 +126,7 @@ namespace GliwickiDzik.API.Controllers
             _unitOfWork.Exercises.RemoveRange(exercisesToRemove);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: Excercises have been deleted.");
             
             throw new Exception("Error: Removing exercises from database failed!");    
         }
