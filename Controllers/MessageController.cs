@@ -20,17 +20,13 @@ namespace GliwickiDzik.API.Controllers
     public class MessageController : ControllerBase
     {
         IUnitOfWork _unitOfWork;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public MessageController(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper)
+        public MessageController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _userRepository = userRepository;
             _mapper = mapper;
         }
-
-         #region = "MESSAGES"
 
         [HttpGet("{messageId}")]
         public async Task<IActionResult> GetMessageAsync(int userId, int messageId)
@@ -38,7 +34,7 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var message = await _unitOfWork.Messages.GetByIdAsync(messageId);
+            var message = await _unitOfWork.Messages.FindOneAsync(m => m.MessageId == messageId);
 
             if (message == null)
                 return BadRequest("Error: Message cannot be found!");
@@ -48,7 +44,7 @@ namespace GliwickiDzik.API.Controllers
             return Ok(messageToReturn);
         }
 
-        [HttpGet("GetAllMessages")]
+        [HttpGet]
         public async Task<IActionResult> GetMessagesForUser(int userId, [FromQuery]MessageParams messageParams)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -70,13 +66,13 @@ namespace GliwickiDzik.API.Controllers
             return Ok(messagesToReturn);
         }
 
-        [HttpGet("GetConvMessages")]
-        public async Task<IActionResult> GetConvMessages(int userId)
+        [HttpGet("corresponded")]
+        public async Task<IActionResult> GetCorrespondedUsersAsync(int userId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var listOfUsers = await _unitOfWork.Messages.GetConvMessagesAsync(userId);
+            var listOfUsers = await _unitOfWork.Messages.GetCorrespondedUsersAsync(userId);
 
             if (listOfUsers == null)
                 return NoContent();
@@ -86,12 +82,16 @@ namespace GliwickiDzik.API.Controllers
             return Ok(listToReturn);
         }
 
-        
-        [HttpGet("GetMessageThread/{recipientId}")]
+        [HttpGet("{recipientId}/thread")]
         public async Task<IActionResult> GetMessageThreadAsync(int userId, int recipientId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
+            
+            var recipient = await _unitOfWork.Users.FindOneAsync(u => u.UserId == recipientId);
+
+            if (recipient == null)
+                return BadRequest("Error: User cannot be found!");
             
             var messages = await _unitOfWork.Messages.GetMessageThreadAsync(userId, recipientId);
 
@@ -111,39 +111,28 @@ namespace GliwickiDzik.API.Controllers
             
             messageForCreateDTO.SenderId = userId;
 
-            var recipient = await _userRepository.GetOneUserAsync(messageForCreateDTO.RecipientId);
-            //var sender = await _userRepository.GetOneUserAsync(userId);
+            var recipient = await _unitOfWork.Users.FindOneAsync(u => u.UserId == messageForCreateDTO.RecipientId);
 
             if (recipient == null)
                 return BadRequest("Error: The user cannot be found!");
             
-            // if(!recipient.Conversation.Contains(userId))
-            //     recipient.Conversation.Add(userId);
-
-            // if(!sender.Conversation.Contains(messageForCreateDTO.RecipientId))
-            //     sender.Conversation.Add(messageForCreateDTO.RecipientId);
-            
             var createdMessage = _mapper.Map<MessageModel>(messageForCreateDTO);
 
             _unitOfWork.Messages.Add(createdMessage);
+            
+            if (await _unitOfWork.SaveAllAsync())
+                return StatusCode(201);
 
-            //var messageToReturn = _mapper.Map<MessageForCreateDTO>(createdMessage);
-            
-            if (!await _unitOfWork.SaveAllAsync())
-                throw new Exception("Error: Saving message to database failed!");
-            
-            //return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, messageToReturn);
-            //return CreatedAtRoute("GetMessage", new {messageId = createdMessage.MessageId}, createdMessage);
-            return StatusCode(201);
+            throw new Exception("Error: Saving message to database failed!");
         }
         
-        [HttpDelete("RemoveMessage/{messageId}")]
+        [HttpDelete("{messageId}")]
         public async Task<IActionResult> RemoveMessageAsync(int userId, int messageId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var message = await _unitOfWork.Messages.GetByIdAsync(messageId);
+            var message = await _unitOfWork.Messages.FindOneAsync(m => m.MessageId == messageId);
 
             if (message == null)
                 return BadRequest("Error: The message cannot be found!");
@@ -151,7 +140,7 @@ namespace GliwickiDzik.API.Controllers
             if (message.SenderId == userId)
             {
                 if (message.SenderDeleted == true)
-                    return BadRequest("The message has been already deleted!");
+                    return StatusCode(304);
                 
                 else
                     message.SenderDeleted = true;
@@ -160,7 +149,7 @@ namespace GliwickiDzik.API.Controllers
             if (message.RecipientId == userId)
             {
                 if (message.RecipientDeleted == true)
-                    return BadRequest("The message has been already deleted!");
+                    return StatusCode(304);
                 
                 else
                     message.SenderDeleted = true;
@@ -169,13 +158,13 @@ namespace GliwickiDzik.API.Controllers
             if (message.SenderDeleted == true && message.RecipientDeleted == true)
                 _unitOfWork.Messages.Remove(message);
             
-            if (!await _unitOfWork.SaveAllAsync())
-                throw new Exception("Error: Removing message from database failed!");
-            
-            return NoContent();
+            if (await _unitOfWork.SaveAllAsync())
+                return Ok("Info: The message has been deleted.");
+
+            throw new Exception("Error: Removing message from database failed!");
         }
         
-        [HttpDelete("RemoveMessageThread/{recipientId}")]
+        [HttpDelete("{recipientId}/thread")]
         public async Task<IActionResult> RemoveMessageThreadAsync(int userId, int recipientId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -225,7 +214,7 @@ namespace GliwickiDzik.API.Controllers
             messagesToDelete = null;
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: The message thread has been deleted.");
             
             throw new Exception("Error: Removing messages from database failed!");
         }
@@ -236,21 +225,21 @@ namespace GliwickiDzik.API.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var message = await _unitOfWork.Messages.GetByIdAsync(messageId);
+            var message = await _unitOfWork.Messages.FindOneAsync(m => m.MessageId == messageId);
 
             if (message.RecipientId != userId)
                 return Unauthorized();
             
-            message.IsRead = true;
-            message.DateOfRead = DateTime.Now;
+            if (!message.IsRead)
+            {
+                message.IsRead = true;
+                message.DateOfRead = DateTime.Now;
+            }
 
-            if (!await _unitOfWork.SaveAllAsync())
-                throw new Exception("Error: Saving readed message to database failed!");
-            
-            return NoContent();
+            if (await _unitOfWork.SaveAllAsync())
+                return Ok("Info: The message has been read");
+
+            throw new Exception("Error: Saving readed message to database failed!");
         }
-    
-        #endregion
-        
     }
 }

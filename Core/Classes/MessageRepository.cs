@@ -39,7 +39,7 @@ namespace GliwickiDzik.API.Data
             return await PagedList<MessageModel>.CreateListAsync(messages, messageParams.PageNumber, messageParams.PageSize);
         }
         
-        public async Task<IEnumerable<UserModel>> GetConvMessagesAsync(int userId)
+        public async Task<IEnumerable<UserModel>> GetCorrespondedUsersAsync(int userId)
         {
             var messages = await _dataContext.MessageModel.Where(m => m.SenderId == userId || m.RecipientId == userId)
                 .OrderByDescending(m => m.DateOfSent).ToListAsync();
@@ -75,8 +75,6 @@ namespace GliwickiDzik.API.Data
         public async Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId)
         {
             return await _dataContext.MessageModel
-                //.Include(s => s.SenderId == userId)
-                //.Include(r => r.RecipientId == recipientId)
                 .Where(m => m.RecipientId == userId && m.SenderId == recipientId && m.RecipientDeleted == false
                          || m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted == false)
                 .OrderByDescending(m => m.DateOfSent).ToListAsync();

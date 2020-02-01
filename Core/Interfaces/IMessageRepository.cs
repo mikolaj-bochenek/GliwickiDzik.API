@@ -8,7 +8,7 @@ namespace GliwickiDzik.API.Data
 {
     public interface IMessageRepository : IGenericRepository<MessageModel>
     {
-        Task<IEnumerable<UserModel>> GetConvMessagesAsync(int userId);
+        Task<IEnumerable<UserModel>> GetCorrespondedUsersAsync(int userId);
         Task<PagedList<MessageModel>> GetMessagesForUserAsync(MessageParams messageParams);
         Task<IEnumerable<MessageModel>> GetMessageThreadAsync(int userId, int recipientId);
     }

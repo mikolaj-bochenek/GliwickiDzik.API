@@ -32,7 +32,7 @@ namespace GliwickiDzik.API.Controllers
 
         #region = "TRAINING PLAN CRUD"
 
-        [HttpGet("GetTrainingPlan/{trainingPlanId}")]
+        [HttpGet("{trainingPlanId}")]
         public async Task<IActionResult> GetOneTrainingPlanAsync(int trainingPlanId)
         {
             var trainingPlan = await _unitOfWork.Plans.GetOneTrainingPlanAsync(trainingPlanId);
