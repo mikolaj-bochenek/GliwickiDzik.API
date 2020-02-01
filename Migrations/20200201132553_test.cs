@@ -234,28 +234,6 @@ namespace GliwickiDzik.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExerciseForTrainingModel",
-                columns: table => new
-                {
-                    ExerciseForTrainingId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Sets = table.Column<int>(nullable: false),
-                    Reps = table.Column<int>(nullable: false),
-                    TrainingId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExerciseForTrainingModel", x => x.ExerciseForTrainingId);
-                    table.ForeignKey(
-                        name: "FK_ExerciseForTrainingModel_TrainingModel_TrainingId",
-                        column: x => x.TrainingId,
-                        principalTable: "TrainingModel",
-                        principalColumn: "TrainingId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "NewExercise",
                 columns: table => new
                 {
@@ -293,11 +271,6 @@ namespace GliwickiDzik.Migrations
                 name: "IX_CommentModel_TrainingPlanId",
                 table: "CommentModel",
                 column: "TrainingPlanId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExerciseForTrainingModel_TrainingId",
-                table: "ExerciseForTrainingModel",
-                column: "TrainingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LikeModel_PlanIdIsLikedByUserId",
@@ -354,9 +327,6 @@ namespace GliwickiDzik.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CommentModel");
-
-            migrationBuilder.DropTable(
-                name: "ExerciseForTrainingModel");
 
             migrationBuilder.DropTable(
                 name: "ExerciseModel");

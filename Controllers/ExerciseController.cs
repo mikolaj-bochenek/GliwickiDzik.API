@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GliwickiDzik.API.Data;
 using GliwickiDzik.API.DTOs;
-using GliwickiDzik.API.Helpers;
+using GliwickiDzik.API.Helpers.Params;
 using GliwickiDzik.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,23 +16,19 @@ namespace GliwickiDzik.API.Controllers
     [Route("api/{userId}/[controller]")]
     [ApiController]
     [Authorize]
-    [ServiceFilter(typeof(ActionFilter))]
     public class ExerciseController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
 
-        public ExerciseController(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper)
+        public ExerciseController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        #region  = "EXERCISE FOR TRAINING"
-
-        [HttpGet("GetExercise/{exerciseId}")]
+        [AllowAnonymous]
+        [HttpGet("{exerciseId}")]
         public async Task<IActionResult> GetExerciseAsync(int exerciseId)
         {
             var exericse = await _unitOfWork.Exercises.GetByIdAsync(exerciseId);
@@ -40,56 +36,53 @@ namespace GliwickiDzik.API.Controllers
             if (exericse == null)
                 return BadRequest("Error: The exercise cannot be found!");
             
-            var exerciseToReturn = _mapper.Map<ExerciseForTrainingForReturnDTO>(exericse);
+            var exerciseToReturn = _mapper.Map<ExerciseForReturnDTO>(exericse);
 
             return Ok(exerciseToReturn);
         }
         
-        [HttpGet("GetExercises/{trainingId}")]
-        public async Task<IActionResult> GetAllExercisesForTrainingAsync(int trainingId)
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetAllExercisesAsync([FromQuery]ExerciseParams exerciseParams)
         {
-            var exercises = await _unitOfWork.Exercises.GetAllExercisesForTrainingAsync(trainingId);
+            var exercises = await _unitOfWork.Exercises.GetAllExercisesAsync(exerciseParams);
 
             if (exercises == null)
                 return NoContent();
 
-            var exercisesToReturn = _mapper.Map<IEnumerable<ExerciseForTrainingForReturnDTO>>(exercises);
+            var exercisesToReturn = _mapper.Map<IEnumerable<ExerciseForReturnDTO>>(exercises);
 
             return Ok(exercisesToReturn);
         }
 
-        [HttpPost("AddExercise/{trainingId}")]
-        public async Task<IActionResult> AddExersiceForTrainingAsync(int userId, int exeId, int trainingId, ExerciseForTrainingForCreateDTO exerciseForTrainingForCreateDTO)
+        [HttpPost]
+        public async Task<IActionResult> AddExersiceAsync(int userId, ExerciseForCreateDTO exerciseForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var exercise = _unitOfWork .Exes.GetByIdAsync(exeId);
-            var training = await _unitOfWork.Trainings.GetOneTrainingAsync(trainingId);
+            if (await _unitOfWork.Exercises.IsExerciseExist(exerciseForCreateDTO.Name))
+                return BadRequest("Error: Exercise already exist!");
 
-            if (training == null)
-                return BadRequest("Error: Training cannot be found!");
-
-            var exericeToCreate = _mapper.Map<ExerciseForTrainingModel>(exerciseForTrainingForCreateDTO);
-            exericeToCreate.TrainingId = trainingId;
+            var exericeToCreate = _mapper.Map<ExerciseModel>(exerciseForCreateDTO);
 
             _unitOfWork.Exercises.Add(exericeToCreate);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return StatusCode(201);
 
             throw new Exception("Error: Saving exercise to database failed!");
         }
 
-        [HttpPut("EditExercise/{exerciseId}")]
-        public async Task<IActionResult> EditExerciseForTrainingAsync(int userId, int exerciseId, ExerciseForTrainingForEditDTO exerciseForTrainingForEditDTO)
+        [HttpPut("{exerciseId}")]
+        public async Task<IActionResult> EditExerciseAsync(int userId, int exerciseId, ExerciseForCreateDTO exerciseForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
             var exercise = await _unitOfWork.Exercises.GetByIdAsync(exerciseId);
 
-            var editedExercise = _mapper.Map(exerciseForTrainingForEditDTO, exercise);
+            var editedExercise = _mapper.Map(exerciseForCreateDTO, exercise);
 
             if (!await _unitOfWork.SaveAllAsync())
                 throw new Exception("Error: Saving edited exercise to database failed!");
@@ -97,8 +90,8 @@ namespace GliwickiDzik.API.Controllers
             return NoContent();
         }
         
-        [HttpDelete("RemoveExercise/{exerciseId}")]
-        public async Task<IActionResult> RemoveExerciseForTrainingAsync(int userId, int exerciseId)
+        [HttpDelete("{exerciseId}")]
+        public async Task<IActionResult> RemoveExerciseAsync(int userId, int exerciseId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -116,13 +109,13 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error: Removing exercise from database failed!");
         }
         
-        [HttpDelete("RemoveExercises/{trainingId}")]
+        [HttpDelete]
         public async Task<IActionResult> RemoveAllExercisesAsync(int userId, int trainingId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var exercisesToRemove = await _unitOfWork.Exercises.GetAllExercisesForTrainingAsync(trainingId);
+            var exercisesToRemove = await _unitOfWork.Exercises.GetAllAsync();
 
             if (exercisesToRemove == null)
                 return BadRequest("Error: Exercises cannot be found!");
@@ -135,6 +128,5 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error: Removing exercises from database failed!");    
         }
 
-        #endregion
     }
 }

@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace GliwickiDzik.API.Models
+namespace GliwickiDzik.API.DTOs
 {
-    public class ExerciseModel
+    public class ExerciseForReturnDTO
     {
         public int ExerciseId { get; set; }
         public string Name { get; set; }

@@ -11,7 +11,6 @@ namespace GliwickiDzik.Data
         public DbSet<UserModel> UserModel { get; set; }
         public DbSet<PhotoModel> PhotoModel { get; set; }
         public DbSet<CommentModel> CommentModel { get; set; }
-        public DbSet<ExerciseForTrainingModel> ExerciseForTrainingModel { get; set; }
         public DbSet<ExerciseModel> ExerciseModel { get; set; }
         public DbSet<MessageModel> MessageModel { get; set; }
         public DbSet<TrainingPlanModel> TrainingPlanModel { get; set; }
@@ -20,7 +19,8 @@ namespace GliwickiDzik.Data
         public DbSet<NewTraining> NewTraining { get; set; }
 
          protected override void OnModelCreating(ModelBuilder builder)
-        {
+        {   
+            builder.Entity<ExerciseModel>().HasKey(k => k.ExerciseId);
             builder.Entity<LikeModel>().HasKey(k => new { k.UserIdLikesPlanId, k.PlanIdIsLikedByUserId });
 
             builder.Entity<LikeModel>().HasOne(u => u.PlanIsLiked)

@@ -17,7 +17,6 @@ namespace GliwickiDzik.API.Data
         public async Task<IEnumerable<TrainingModel>> GetAllTrainingsForTrainingPlanAsync(int trainingPlanId)
         {
             var trainings = await _dataContext.TrainingModel
-                                        .Include(e => e.ExercisesForTraining)
                                         .Where(p => p.TrainingPlanId == trainingPlanId)
                                         .ToListAsync();
             trainings.OrderByDescending(e => e.Day);
@@ -27,8 +26,7 @@ namespace GliwickiDzik.API.Data
 
         public async Task<TrainingModel> GetOneTrainingAsync(int trainingId)
         {
-            return await _dataContext.TrainingModel.Include(t => t.ExercisesForTraining)
-                .FirstOrDefaultAsync(t => t.TrainingId == trainingId);
+            return await _dataContext.TrainingModel.FirstOrDefaultAsync(t => t.TrainingId == trainingId);
         }
     }  
 }

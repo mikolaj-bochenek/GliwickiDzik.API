@@ -10,7 +10,7 @@ namespace GliwickiDzik.API.Helpers
     {
         public AutoMapperProfile()
         {
-            //Method<what map, map to what>();
+            //CreateMap<what you map, map to what>();
 
             CreateMap<UserForRegisterDTO, UserModel>();
             CreateMap<UserForEditDTO, UserModel>();
@@ -23,12 +23,10 @@ namespace GliwickiDzik.API.Helpers
                     opt.ResolveUsing(src => src.DateOfBirth.CalculateAge());
                 });
             CreateMap<UserForRegisterDTO, UserForLoginDTO>();
-
             CreateMap<UserModel, UserToConvDTO>();
             
-            CreateMap<ExerciseForTrainingForCreateDTO, ExerciseForTrainingModel>();
-            CreateMap<ExerciseForTrainingForEditDTO, ExerciseForTrainingModel >();
-            CreateMap<ExerciseForTrainingModel, ExerciseForTrainingForReturnDTO>().ReverseMap();
+            CreateMap<ExerciseForCreateDTO, ExerciseModel>();
+            CreateMap<ExerciseModel, ExerciseForReturnDTO>().ReverseMap();
 
             CreateMap<TrainingPlanForCreateDTO, TrainingPlanModel>();
             CreateMap<TrainingPlanModel, TrainingPlanForReturnDTO>();

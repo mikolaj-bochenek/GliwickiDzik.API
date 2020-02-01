@@ -38,7 +38,7 @@ namespace GliwickiDzik.API.Data
                 }
             }
             
-             return await PagedList<TrainingPlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
+            return await PagedList<TrainingPlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
         }
         public async Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int whoseUserId)
         {

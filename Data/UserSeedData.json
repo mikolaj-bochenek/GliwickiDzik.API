@@ -1,6 +1,6 @@
 [
   {
-    "Username": "Daugherty",
+    "Username": "Fugler",
     "Password": "password",
     "Email": "daughertyjoseph@apexia.com",
     "Gender": "mezczyzna",
@@ -15,7 +15,7 @@
     "BicepsSize": 25.9
   },
   {
-    "Username": "Meadows",
+    "Username": "Nikoś",
     "Password": "password",
     "Email": "meadowsjoseph@apexia.com",
     "Gender": "mezczyzna",
@@ -30,7 +30,7 @@
     "BicepsSize": 41
   },
   {
-    "Username": "Merritt",
+    "Username": "Bochen",
     "Password": "password",
     "Email": "merrittjoseph@apexia.com",
     "Gender": "mezczyzna",
@@ -42,10 +42,10 @@
     "Growth": 196,
     "Weight": 114,
     "Description": "Dolor tempor tempor ipsum veniam dolore occaecat nisi laborum ut ea enim. Cillum adipisicing laborum ullamco enim velit commodo nostrud minim dolore eu qui ex consequat qui. Reprehenderit deserunt et nulla anim ex sunt consectetur dolore. Consectetur Lorem cillum anim veniam dolore qui pariatur adipisicing anim aute laborum occaecat anim cillum. Qui adipisicing nisi duis non velit tempor consectetur sit minim non.\r\n",
-    "BicepsSize": 22.5
+    "BicepsSize": 45
   },
   {
-    "Username": "Fox",
+    "Username": "Mular",
     "Password": "password",
     "Email": "foxjoseph@apexia.com",
     "Gender": "mezczyzna",
@@ -60,7 +60,7 @@
     "BicepsSize": 52.6
   },
   {
-    "Username": "Mcdowell",
+    "Username": "Wojtas",
     "Password": "password",
     "Email": "mcdowelljoseph@apexia.com",
     "Gender": "mezczyzna",

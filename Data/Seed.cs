@@ -6,6 +6,7 @@ using GliwickiDzik.Models;
 using System.Collections.Generic;
 using System.Text;
 using GliwickiDzik.API.Models;
+using System.Linq;
 
 namespace GliwickiDzik.API.Data
 {
@@ -18,15 +19,10 @@ namespace GliwickiDzik.API.Data
             _dataContext = dataContext;
         }
 
-        public bool SaveAll()
-        {
-            var result = _dataContext.SaveChanges() > 0;
-            return result;
-        }
         public void SeedData()
         {
-            //var userData = File.ReadAllText("Data/UserSeedData.json");
-            //var users = JsonConvert.DeserializeObject<List<UserModel>>(userData);
+            var userData = File.ReadAllText("Data/UserSeedData.json");
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(userData);
 
             //var trainingPlanData = File.ReadAllText("Data/TrainingPlanSeedData.json");
             //var trainingPlans = JsonConvert.DeserializeObject<List<TrainingPlanModel>>(trainingPlanData);
@@ -37,23 +33,30 @@ namespace GliwickiDzik.API.Data
             var exerciseData = File.ReadAllText("Data/ExerciseSeedData.json");
             var exercises = JsonConvert.DeserializeObject<List<ExerciseModel>>(exerciseData);
 
-            // foreach (var user in users)
-            // {
-            //     byte[] passwordHash, passwordSalt;
+            var listOfUsers = new List<UserModel>();
 
-            //     GetPasswordHashAndSalt("password", out passwordHash, out passwordSalt);
+            foreach (var user in users)
+            {
+                byte[] passwordHash, passwordSalt;
 
-            //     user.PasswordHash = passwordHash;
-            //     user.PasswordSalt = passwordSalt;
-            //     user.Username = user.Username.ToLower();
+                GetPasswordHashAndSalt("password", out passwordHash, out passwordSalt);
 
-            //     _dataContext.UserModel.Add(user);
-            // }
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+                user.Username = user.Username.ToLower();
 
-            _dataContext.ExerciseModel.AddRange(exercises);
-            if (!SaveAll())
-                throw new System.Exception("SAVING FAILED");
+                listOfUsers.Add(user);
+            }
+
+            if (!_dataContext.UserModel.Any())
+                _dataContext.UserModel.AddRange(listOfUsers);
+
+            if (!_dataContext.ExerciseModel.Any())  
+                _dataContext.ExerciseModel.AddRange(exercises);
+
+            _dataContext.SaveChangesAsync();
         }
+
         private void GetPasswordHashAndSalt(string password, out byte[] passwordHash, out byte[] passwordSalt) 
         {
             using(var hmac = new System.Security.Cryptography.HMACSHA512())
@@ -62,5 +65,5 @@ namespace GliwickiDzik.API.Data
                 passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
         }
-        }
     }
+}

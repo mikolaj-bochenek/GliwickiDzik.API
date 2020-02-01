@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GliwickiDzik.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200131185532_test")]
+    [Migration("20200201132553_test")]
     partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,31 +46,6 @@ namespace GliwickiDzik.Migrations
                     b.HasIndex("TrainingPlanId");
 
                     b.ToTable("CommentModel");
-                });
-
-            modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseForTrainingModel", b =>
-                {
-                    b.Property<int>("ExerciseForTrainingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Reps")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Sets")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TrainingId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ExerciseForTrainingId");
-
-                    b.HasIndex("TrainingId");
-
-                    b.ToTable("ExerciseForTrainingModel");
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseModel", b =>
@@ -361,15 +336,6 @@ namespace GliwickiDzik.Migrations
                     b.HasOne("GliwickiDzik.API.Models.TrainingPlanModel", "TrainingPlan")
                         .WithMany("Comments")
                         .HasForeignKey("TrainingPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GliwickiDzik.API.Models.ExerciseForTrainingModel", b =>
-                {
-                    b.HasOne("GliwickiDzik.API.Models.TrainingModel", "Training")
-                        .WithMany("ExercisesForTraining")
-                        .HasForeignKey("TrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
