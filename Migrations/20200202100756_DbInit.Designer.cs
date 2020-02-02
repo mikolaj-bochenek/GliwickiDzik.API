@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GliwickiDzik.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200202021424_test")]
-    partial class test
+    [Migration("20200202100756_DbInit")]
+    partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
