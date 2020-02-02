@@ -99,13 +99,14 @@ namespace GliwickiDzik.Controllers
                 return Unauthorized();
             
             var userForEdit = await _unitOfWork.Users.FindOneAsync(u => u.UserId == userId);
+            var userToEqual = _mapper.Map<UserModel>(userForEditDTO);
 
             if (userForEdit == null)
                 return BadRequest("Error: The user cannot be found!");
 
             var editedUser =_mapper.Map(userForEditDTO, userForEdit);
 
-            if (editedUser == userForEdit)
+            if (userForEdit == userToEqual)
                 return StatusCode(304);
 
             if (await _unitOfWork.SaveAllAsync())
