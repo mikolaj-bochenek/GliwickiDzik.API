@@ -14,6 +14,7 @@ using GliwickiDzik.API.Models;
 
 namespace GliwickiDzik.Controllers
 {
+    public class SkipImportantTaskAttribute : Attribute {}
     //http://localhost:5000/api/user
     [Route("api/{userId}/[controller]")]
     [ApiController]
@@ -110,7 +111,7 @@ namespace GliwickiDzik.Controllers
                 return StatusCode(304);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: The user has been updated.");
             
             throw new Exception("Error: Saving edited user to database failed!");
         }

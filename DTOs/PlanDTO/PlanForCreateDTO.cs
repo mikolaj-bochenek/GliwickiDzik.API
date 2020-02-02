@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
+using GliwickiDzik.API.Helpers.Params;
 
 namespace GliwickiDzik.API.DTOs
 {
-    public class TrainingPlanForCreateDTO
+    public class PlanForCreateDTO
     {
-        public TrainingPlanForCreateDTO()
+        public PlanForCreateDTO()
         {
             DateOfCreated = DateTime.Now;
             LikeCounter = 0;
@@ -17,5 +19,6 @@ namespace GliwickiDzik.API.DTOs
         public bool IsMain { get; set; }
         public int LikeCounter { get; set; }
         public int CommentCounter { get; set; }
+        public List<TrainingsForPlan> Trainings { get; set; }
     }
 }

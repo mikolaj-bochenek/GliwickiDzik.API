@@ -1,4 +1,5 @@
 using GliwickiDzik.API.Helpers;
+using GliwickiDzik.API.Helpers.Params;
 using GliwickiDzik.API.Models;
 using GliwickiDzik.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,15 +15,20 @@ namespace GliwickiDzik.Data
         public DbSet<CommentModel> CommentModel { get; set; }
         public DbSet<ExerciseModel> ExerciseModel { get; set; }
         public DbSet<MessageModel> MessageModel { get; set; }
-        public DbSet<TrainingPlanModel> TrainingPlanModel { get; set; }
+        public DbSet<PlanModel> TrainingPlanModel { get; set; }
         public DbSet<TrainingModel> TrainingModel { get; set; }
         public DbSet<LikeModel> LikeModel { get; set; }
 
          protected override void OnModelCreating(ModelBuilder builder)
-        {   
+        {
+            builder.Entity<PlanModel>().HasMany(p => p.Trainings)
+                    .WithOne(t => t.Plan)
+                    .HasForeignKey(k => k.PlanId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<UserModel>().HasKey(k => k.UserId);
 
-            builder.Entity<TrainingPlanModel>().HasKey(k => k.TrainingPlanId);
+            builder.Entity<PlanModel>().HasKey(k => k.PlanId);
 
             builder.Entity<TrainingModel>().HasKey(k => k.TrainingId);
             

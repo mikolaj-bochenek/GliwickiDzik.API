@@ -1,5 +1,7 @@
 using AutoMapper;
 using GliwickiDzik.API.DTOs;
+using GliwickiDzik.API.DTOs.TrainingDTO;
+using GliwickiDzik.API.Helpers.Params;
 using GliwickiDzik.API.Models;
 using GliwickiDzik.DTOs;
 using GliwickiDzik.Models;
@@ -28,15 +30,15 @@ namespace GliwickiDzik.API.Helpers
             CreateMap<ExerciseForCreateDTO, ExerciseModel>();
             CreateMap<ExerciseModel, ExerciseForReturnDTO>().ReverseMap();
 
-            CreateMap<TrainingPlanForCreateDTO, TrainingPlanModel>();
-            CreateMap<TrainingPlanModel, TrainingPlanForReturnDTO>();
+            CreateMap<PlanForCreateDTO, PlanModel>();
+            CreateMap<PlanModel, PlanForReturnDTO>();
 
             CreateMap<TrainingForCreateDTO, TrainingModel>();
             CreateMap<TrainingForEditDTO, TrainingModel>();
             CreateMap<TrainingModel, TrainingForReturnDTO>();
 
-            CreateMap<TrainingPlanModel, TrainingPlanForReturnDTO>();
-            CreateMap<TrainingPlanForEditDTO, TrainingPlanModel>();
+            CreateMap<PlanModel, PlanForReturnDTO>();
+            CreateMap<PlanForEditDTO, PlanModel>();
             
             CreateMap<TrainingModel, TrainingForReturnDTO>();
 
@@ -45,6 +47,8 @@ namespace GliwickiDzik.API.Helpers
 
             CreateMap<CommentForReturnDTO, CommentModel>();
             CreateMap<CommentForEditDTO, CommentModel>();
+
+            CreateMap<TrainingsForPlanforReturnDTO, TrainingsForPlan>();
         }
     }
 }

@@ -23,11 +23,15 @@ namespace GliwickiDzik.API.Helpers
 
             var userId = int.Parse(resultContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var user = await repository.GetOneUserAsync(userId);
+            var user = await repository.FindOneAsync(u => u.UserId == userId);
 
-            user.LastActive = DateTime.Now;
+            if (user != null)
+            {
+                user.LastActive = DateTime.Now;
+                await _unitOfWork.SaveAllAsync();
+            }
 
-            await _unitOfWork.SaveAllAsync();
+            
         }
     }
 }

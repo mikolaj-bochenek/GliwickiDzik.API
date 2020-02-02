@@ -5,12 +5,12 @@ using GliwickiDzik.API.Models;
 
 namespace GliwickiDzik.API.Data
 {
-    public interface IPlanRepository : IGenericRepository<TrainingPlanModel>
+    public interface IPlanRepository : IGenericRepository<PlanModel>
     {
-        Task<TrainingPlanModel> GetOneTrainingPlanAsync(int trainingPlanId);
-        Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansAsync(TrainingPlanParams trainingPlanParams);
-        Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int whoseUserId, TrainingPlanParams trainingPlanParams);
-        Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int whoseUserId);
-        Task<bool> IsTrainingPlanExist(int userId, string trainingPlanName);
+        Task<PlanModel> GetOnePlanAsync(int planId);
+        Task<PagedList<PlanModel>> GetAllPlansAsync(TrainingPlanParams trainingPlanParams);
+        Task<PagedList<PlanModel>> GetAllPlansForUserAsync(int whoseUserId, TrainingPlanParams trainingPlanParams);
+        Task<IEnumerable<PlanModel>> GetAllPlansForUserAsync(int whoseUserId);
+        Task<bool> IsPlanExist(int userId, string trainingPlanName);
     }
 }

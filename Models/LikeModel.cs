@@ -9,7 +9,7 @@ namespace GliwickiDzik.API.Models
         public int UserIdLikesPlanId { get; set; }
         public int PlanIdIsLikedByUserId { get; set; }
         public UserModel UserLikes { get; set; }
-        public TrainingPlanModel PlanIsLiked { get; set; }
+        public PlanModel PlanIsLiked { get; set; }
 
     }
 }

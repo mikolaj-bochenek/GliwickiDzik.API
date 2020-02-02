@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using GliwickiDzik.API.DTOs.TrainingDTO;
+using GliwickiDzik.API.Helpers.Params;
 using GliwickiDzik.API.Models;
 
 namespace GliwickiDzik.API.DTOs
 {
-    public class TrainingPlanForReturnDTO
+    public class PlanForReturnDTO
     {
-        public int TrainingPlanId { get; set; }
+        public int PlanId { get; set; }
         public int UserId { get; set; }
         public string Owner { get; set; }
         public string Name { get; set; }
@@ -16,8 +18,8 @@ namespace GliwickiDzik.API.DTOs
         public bool IsMain { get; set; }
         public int LikeCounter { get; set; }
         public int CommentCounter { get; set; }
+        public List<TrainingsForPlanforReturnDTO> Trainings { get; set; }
         public ICollection<CommentForReturnDTO> Comments { get; set; }
-        public ICollection<TrainingForReturnDTO> Trainings { get; set; }
         public ICollection<LikeModel> PlanIsLiked { get; set; }
         public ICollection<LikeModel> UserLikes { get; set; }
     }

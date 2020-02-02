@@ -21,79 +21,80 @@ namespace GliwickiDzik.API.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
 
-        public PlanController(IUnitOfWork unitOfWork, IUserRepository userRepository, IMapper mapper)
+        public PlanController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        #region = "TRAINING PLAN CRUD"
-
-        [HttpGet("{trainingPlanId}")]
-        public async Task<IActionResult> GetOneTrainingPlanAsync(int trainingPlanId)
+        
+        [HttpGet("{planId}")]
+        public async Task<IActionResult> GetOnePlanAsync(int userId, int planId)
         {
-            var trainingPlan = await _unitOfWork.Plans.GetOneTrainingPlanAsync(trainingPlanId);
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
 
-            if (trainingPlan == null)
+            var plan = await _unitOfWork.Plans.GetOnePlanAsync(planId);
+
+            if (plan == null)
                 return BadRequest("Error: The training plan cannot be found!");
 
-            var trainingPlanToReturn = _mapper.Map<TrainingPlanForReturnDTO>(trainingPlan);
+            var planToReturn = _mapper.Map<PlanForReturnDTO>(plan);
 
-            return Ok(trainingPlanToReturn);
+            return Ok(planToReturn);
         }
 
-        [HttpGet("GetTrainingPlans")]
-        public async Task<IActionResult> GetAllTrainingPlansAsync([FromQuery]TrainingPlanParams trainingPlanParams)
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetAllPlansAsync([FromQuery]TrainingPlanParams planParams)
         {
-            var trainingPlans = await _unitOfWork.Plans.GetAllTrainingPlansAsync(trainingPlanParams);
+            var plans = await _unitOfWork.Plans.GetAllPlansAsync(planParams);
 
-            if (trainingPlans.Count == 0)
+            if (plans.Count == 0)
                 return NoContent();
 
-            var trainingPlansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(trainingPlans);
+            var trainingPlansToReturn = _mapper.Map<IEnumerable<PlanForReturnDTO>>(plans);
 
-            Response.AddPagination(trainingPlans.CurrentPage, trainingPlans.PageSize, trainingPlans.TotalCount, trainingPlans.TotalPages);
+            Response.AddPagination(plans.CurrentPage, plans.PageSize, plans.TotalCount, plans.TotalPages);
 
             return Ok(trainingPlansToReturn);
         }
 
-        [HttpGet("GetTrainingPlansForUser/{whoseUserId}")]
-        public async Task<IActionResult> GetAllTrainingPlansForUserAsync(int whoseUserId, [FromQuery]TrainingPlanParams trainingPlanParams)
+        [HttpGet("{id}/all")]
+        public async Task<IActionResult> GetAllPlansForUserAsync(int userId, int id, [FromQuery]TrainingPlanParams trainingPlanParams)
         {
-            var user = await _userRepository.GetOneUserAsync(whoseUserId);
+            var user = await _unitOfWork.Users.FindOneAsync(u => u.UserId == id);
 
             if (user == null)
                 return BadRequest("Error: The user cannot be found!");
 
-            var trainingPlans = await _unitOfWork.Plans.GetAllTrainingPlansForUserAsync(whoseUserId, trainingPlanParams);
+            var plans = await _unitOfWork.Plans.GetAllPlansForUserAsync(userId, trainingPlanParams);
 
-            if (trainingPlans.Count == 0)
+            if (plans.Count == 0)
                  return NoContent();
             
-            var trainingPlansToReturn = _mapper.Map<IEnumerable<TrainingPlanForReturnDTO>>(trainingPlans);
+            var trainingPlansToReturn = _mapper.Map<IEnumerable<PlanForReturnDTO>>(plans);
 
-            Response.AddPagination(trainingPlans.CurrentPage, trainingPlans.PageSize, trainingPlans.TotalCount, trainingPlans.TotalPages);
+            Response.AddPagination(plans.CurrentPage, plans.PageSize, plans.TotalCount, plans.TotalPages);
 
             return Ok(trainingPlansToReturn);
             
         }
         
-        [HttpPost("AddTrainingPlan")]
-        public async Task<IActionResult> AddTrainingPlanAsync(int userId, TrainingPlanForCreateDTO trainingPlanForCreateDTO)
+        [HttpPost]
+        public async Task<IActionResult> AddPlanAsync(int userId, [FromBody]PlanForCreateDTO planForCreateDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            if (await _unitOfWork.Plans.IsTrainingPlanExist(userId, trainingPlanForCreateDTO.Name))
-                return BadRequest("Error: The trainig plan with this name already exist!");
+            if (await _unitOfWork.Plans.IsPlanExist(userId, planForCreateDTO.Name))
+                return BadRequest("Error: The trainig plan already exist!");
 
-            var trainingPlanForCreate = _mapper.Map<TrainingPlanModel>(trainingPlanForCreateDTO);
+            var trainingPlanForCreate = _mapper.Map<PlanModel>(planForCreateDTO);
             trainingPlanForCreate.UserId = userId;
 
-            var userWhoCreated = await _userRepository.GetOneUserAsync(userId);
+            var userWhoCreated = await _unitOfWork.Users.FindOneAsync(u => u.UserId == userId);
 
             trainingPlanForCreate.Owner = userWhoCreated.Username;
 
@@ -105,67 +106,89 @@ namespace GliwickiDzik.API.Controllers
             throw new Exception("Error: Saving training plan to database failed!");
         }
 
-        [HttpPut("EditTrainingPlan/{trainingPlanId}")]
-        public async Task<IActionResult> EditTrainingPlanAsync(int userId, int trainingPlanId, TrainingPlanForEditDTO trainingPlanForEditDTO)
+        [HttpPut("{planId}")]
+        public async Task<IActionResult> EditPlanAsync(int userId, int planId, PlanForEditDTO planForEditDTO)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingPlan = await _unitOfWork.Plans.GetOneTrainingPlanAsync(trainingPlanId);
+            var plan = await _unitOfWork.Plans.FindOneAsync(p => p.PlanId == planId);
 
-            if (trainingPlan == null)
+            var planToEqual = _mapper.Map<PlanModel>(planForEditDTO);
+
+            if (plan == null)
                 return BadRequest("Error: The training plan cannot be found!");
-
-            if (await _unitOfWork.Plans.IsTrainingPlanExist(userId, trainingPlanForEditDTO.Name))
+            
+            if (await _unitOfWork.Plans.IsPlanExist(userId, planForEditDTO.Name))
                 return BadRequest("Error: The trainig plan with this name already exist!");
 
-            var editedTrainingPlan = _mapper.Map(trainingPlanForEditDTO, trainingPlan);
+            var editedTrainingPlan = _mapper.Map(planForEditDTO, plan);
+
+            if (plan == planToEqual)
+                return StatusCode(304);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: The training plan has been updated.");
             
             throw new Exception("Error: Saving edited training plan to database failed!");
             
         }
         
-        [HttpDelete("RemoveTrainingPlan/{trainingPlanId}")]
-        public async Task<IActionResult> RemoveOneTrainingPlanAsync(int userId, int trainingPlanId)
+        [HttpDelete("{planId}")]
+        public async Task<IActionResult> RemoveOnePlanAsync(int userId, int planId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingToRemove = await _unitOfWork.Plans.GetOneTrainingPlanAsync(trainingPlanId);
+            var planToRemove = await _unitOfWork.Plans.FindOneAsync(p => p.PlanId == planId);
 
-            if (trainingToRemove == null)
+            if (planToRemove == null)
                 return BadRequest("Error: Training plan cannot be found!");
 
-            _unitOfWork.Plans.Remove(trainingToRemove);
+            _unitOfWork.Plans.Remove(planToRemove);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: The training plan has been removed.");
             
             throw new Exception("Error: Removing training plan from database failed!");
         }
 
-        [HttpDelete("RemoveTrainingPlans")]
-        public async Task<IActionResult> RemoveAllTrainingPlansAsync(int userId)
+        [HttpDelete]
+        public async Task<IActionResult> RemoveAllPlansForUserAsync(int userId)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
-            var trainingPlansToRemove = await _unitOfWork.Plans.GetAllTrainingPlansForUserAsync(userId);
+            var plansToRemove = await _unitOfWork.Plans.GetAllPlansForUserAsync(userId);
 
-            if (trainingPlansToRemove == null)
+            if (plansToRemove == null)
                 return BadRequest("Error: Training plans cannot be found!");
 
-            _unitOfWork.Plans.RemoveRange(trainingPlansToRemove);
+            _unitOfWork.Plans.RemoveRange(plansToRemove);
 
             if (await _unitOfWork.SaveAllAsync())
-                return NoContent();
+                return Ok("Info: Training plans havee been removed.");
             
             throw new Exception("Error: Removing training plans from database failed!");
         }
-        #endregion
-        
+
+        [HttpDelete("all")]
+        public async Task<IActionResult> RemoveAllPlansAsync(int userId)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var plansToRemove = await _unitOfWork.Plans.GetAllAsync();
+
+            if (plansToRemove == null)
+                return BadRequest("Error: Training plans cannot be found!");
+
+            _unitOfWork.Plans.RemoveRange(plansToRemove);
+
+            if (await _unitOfWork.SaveAllAsync())
+                return Ok("Info: Training plans havee been removed.");
+            
+            throw new Exception("Error: Removing training plans from database failed!");
+        }
     }
 }

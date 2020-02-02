@@ -8,15 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GliwickiDzik.API.Data
 {
-    public class PlanRepository : GenericRepository<TrainingPlanModel>, IPlanRepository
+    public class PlanRepository : GenericRepository<PlanModel>, IPlanRepository
     {
         public PlanRepository(DataContext dataContext) : base(dataContext) {}
-        public async Task<TrainingPlanModel> GetOneTrainingPlanAsync(int trainingPlanId)
-        {
-            return await _dataContext.TrainingPlanModel.Include(t => t.Trainings)
-                .FirstOrDefaultAsync(p => p.TrainingPlanId == trainingPlanId);
-        }
-        public async Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansAsync(TrainingPlanParams trainingPlanParams)
+
+        public async Task<PagedList<PlanModel>> GetAllPlansAsync(TrainingPlanParams trainingPlanParams)
         {
             var trainingPlans = _dataContext.TrainingPlanModel.Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
 
@@ -38,13 +34,13 @@ namespace GliwickiDzik.API.Data
                 }
             }
             
-            return await PagedList<TrainingPlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
+            return await PagedList<PlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
         }
-        public async Task<IEnumerable<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int whoseUserId)
+        public async Task<IEnumerable<PlanModel>> GetAllPlansForUserAsync(int whoseUserId)
         {
             return await _dataContext.TrainingPlanModel.Where(p => p.UserId == whoseUserId).ToListAsync();
         }
-        public async Task<PagedList<TrainingPlanModel>> GetAllTrainingPlansForUserAsync(int whoseUserId, TrainingPlanParams trainingPlanParams)
+        public async Task<PagedList<PlanModel>> GetAllPlansForUserAsync(int whoseUserId, TrainingPlanParams trainingPlanParams)
         {
             var trainingPlans = _dataContext.TrainingPlanModel.Where(p => p.UserId == whoseUserId).Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
 
@@ -66,10 +62,16 @@ namespace GliwickiDzik.API.Data
                 }
             }
             
-             return await PagedList<TrainingPlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
+             return await PagedList<PlanModel>.CreateListAsync(trainingPlans, trainingPlanParams.PageSize, trainingPlanParams.PageNumber);
         }
 
-        public async Task<bool> IsTrainingPlanExist(int userId, string trainingPlanName)
+        public async Task<PlanModel> GetOnePlanAsync(int planId)
+        {
+            return await _dataContext.TrainingPlanModel.Include(t => t.Trainings)
+                    .Where(p => p.PlanId == planId).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> IsPlanExist(int userId, string trainingPlanName)
         {
             if(await _dataContext.TrainingPlanModel.AnyAsync(p => p.Name == trainingPlanName && p.UserId == userId))
                 return true;

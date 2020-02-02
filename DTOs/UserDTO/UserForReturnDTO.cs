@@ -18,6 +18,6 @@ namespace GliwickiDzik.API.DTOs
         public float Weight { get; set; }
         public string Description { get; set; }
         public float BicepsSize { get; set; }
-        public ICollection<TrainingPlanForReturnDTO> TrainingPlans{ get; set; }
+        public ICollection<PlanForReturnDTO> TrainingPlans{ get; set; }
     }
 }
