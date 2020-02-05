@@ -14,7 +14,15 @@ namespace GliwickiDzik.API.Data
 
         public async Task<PagedList<PlanModel>> GetAllPlansAsync(TrainingPlanParams trainingPlanParams)
         {
-            var trainingPlans = _dataContext.TrainingPlanModel.Include(p => p.Trainings).OrderByDescending(p => p.LikeCounter);
+            var trainingPlans = _dataContext.TrainingPlanModel
+                            .Include(t => t.Trainings).ThenInclude(t => t.Monday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Tuesday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Wednesday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Thursday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Friday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Saturday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Sunday)
+                            .OrderByDescending(p => p.LikeCounter);
 
             if (!string.IsNullOrEmpty(trainingPlanParams.OrderBy))
             {
@@ -67,8 +75,16 @@ namespace GliwickiDzik.API.Data
 
         public async Task<PlanModel> GetOnePlanAsync(int planId)
         {
-            return await _dataContext.TrainingPlanModel.Include(t => t.Trainings)
-                    .Where(p => p.PlanId == planId).FirstOrDefaultAsync();
+            return await _dataContext.TrainingPlanModel
+                            .Include(t => t.Trainings).ThenInclude(t => t.Monday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Tuesday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Wednesday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Thursday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Friday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Saturday)
+                            .Include(t => t.Trainings).ThenInclude(t => t.Sunday)
+                            .Where(p => p.PlanId == planId)
+                            .FirstOrDefaultAsync();
         }
 
         public async Task<bool> IsPlanExist(int userId, string trainingPlanName)

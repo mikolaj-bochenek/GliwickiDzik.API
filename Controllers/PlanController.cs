@@ -28,7 +28,7 @@ namespace GliwickiDzik.API.Controllers
             _mapper = mapper;
         }
 
-        
+        [AllowAnonymous]
         [HttpGet("{planId}")]
         public async Task<IActionResult> GetOnePlanAsync(int userId, int planId)
         {

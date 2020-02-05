@@ -10,5 +10,6 @@ namespace GliwickiDzik.API.Data
     {
         Task<PagedList<TrainingModel>> GetAllParametedTrainingsAsync(int userId, TrainingParams trainingParams);
         Task<IEnumerable<TrainingModel>> GetAllTrainingsAsync(int userId);
+        Task<TrainingModel> GetOneTrainingAsync(int trainingId);
     }
 }

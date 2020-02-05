@@ -30,8 +30,6 @@ namespace GliwickiDzik.API.Helpers
                 user.LastActive = DateTime.Now;
                 await _unitOfWork.SaveAllAsync();
             }
-
-            
         }
     }
 }

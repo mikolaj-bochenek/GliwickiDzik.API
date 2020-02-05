@@ -35,7 +35,7 @@ namespace GliwickiDzik.API.Controllers
         [HttpGet("{trainingId}")]
         public async Task<IActionResult> GetOneTrainingAsync(int trainingId)
         {
-            var training = await _unitOfWork.Trainings.FindOneAsync(t => t.TrainingId == trainingId);
+            var training = await _unitOfWork.Trainings.GetOneTrainingAsync(trainingId);
 
             if (training == null)
                 return BadRequest("Error: The training cannot be found!");

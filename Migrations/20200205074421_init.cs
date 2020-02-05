@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GliwickiDzik.Migrations
 {
-    public partial class DbInit : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -240,17 +240,79 @@ namespace GliwickiDzik.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    PlanId = table.Column<int>(nullable: false)
+                    PlanModelPlanId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TrainingsForPlan", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TrainingsForPlan_TrainingPlanModel_PlanId",
-                        column: x => x.PlanId,
+                        name: "FK_TrainingsForPlan_TrainingPlanModel_PlanModelPlanId",
+                        column: x => x.PlanModelPlanId,
                         principalTable: "TrainingPlanModel",
                         principalColumn: "PlanId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrainingId",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TrainId = table.Column<int>(nullable: false),
+                    TrainingsForPlanId = table.Column<int>(nullable: true),
+                    TrainingsForPlanId1 = table.Column<int>(nullable: true),
+                    TrainingsForPlanId2 = table.Column<int>(nullable: true),
+                    TrainingsForPlanId3 = table.Column<int>(nullable: true),
+                    TrainingsForPlanId4 = table.Column<int>(nullable: true),
+                    TrainingsForPlanId5 = table.Column<int>(nullable: true),
+                    TrainingsForPlanId6 = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrainingId", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrainingId_TrainingsForPlan_TrainingsForPlanId",
+                        column: x => x.TrainingsForPlanId,
+                        principalTable: "TrainingsForPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingId_TrainingsForPlan_TrainingsForPlanId1",
+                        column: x => x.TrainingsForPlanId1,
+                        principalTable: "TrainingsForPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingId_TrainingsForPlan_TrainingsForPlanId2",
+                        column: x => x.TrainingsForPlanId2,
+                        principalTable: "TrainingsForPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingId_TrainingsForPlan_TrainingsForPlanId3",
+                        column: x => x.TrainingsForPlanId3,
+                        principalTable: "TrainingsForPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingId_TrainingsForPlan_TrainingsForPlanId4",
+                        column: x => x.TrainingsForPlanId4,
+                        principalTable: "TrainingsForPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingId_TrainingsForPlan_TrainingsForPlanId5",
+                        column: x => x.TrainingsForPlanId5,
+                        principalTable: "TrainingsForPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TrainingId_TrainingsForPlan_TrainingsForPlanId6",
+                        column: x => x.TrainingsForPlanId6,
+                        principalTable: "TrainingsForPlan",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -299,14 +361,49 @@ namespace GliwickiDzik.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrainingId_TrainingsForPlanId",
+                table: "TrainingId",
+                column: "TrainingsForPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingId_TrainingsForPlanId1",
+                table: "TrainingId",
+                column: "TrainingsForPlanId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingId_TrainingsForPlanId2",
+                table: "TrainingId",
+                column: "TrainingsForPlanId2");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingId_TrainingsForPlanId3",
+                table: "TrainingId",
+                column: "TrainingsForPlanId3");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingId_TrainingsForPlanId4",
+                table: "TrainingId",
+                column: "TrainingsForPlanId4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingId_TrainingsForPlanId5",
+                table: "TrainingId",
+                column: "TrainingsForPlanId5");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingId_TrainingsForPlanId6",
+                table: "TrainingId",
+                column: "TrainingsForPlanId6");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrainingPlanModel_UserId",
                 table: "TrainingPlanModel",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TrainingsForPlan_PlanId",
+                name: "IX_TrainingsForPlan_PlanModelPlanId",
                 table: "TrainingsForPlan",
-                column: "PlanId");
+                column: "PlanModelPlanId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -330,10 +427,13 @@ namespace GliwickiDzik.Migrations
                 name: "PhotoModel");
 
             migrationBuilder.DropTable(
-                name: "TrainingsForPlan");
+                name: "TrainingId");
 
             migrationBuilder.DropTable(
                 name: "TrainingModel");
+
+            migrationBuilder.DropTable(
+                name: "TrainingsForPlan");
 
             migrationBuilder.DropTable(
                 name: "TrainingPlanModel");

@@ -1,23 +1,17 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using GliwickiDzik.API.Helpers;
 
 namespace GliwickiDzik.API.DTOs.TrainingDTO
 {
     public class TrainingsForPlanforReturnDTO
     {
-        [NotMapped]
-        public List<int> Monday { get; set; }
-        [NotMapped]
-        public List<int> Tuesday { get; set; }
-        [NotMapped]
-        public List<int> Wednesday { get; set; }
-        [NotMapped]
-        public List<int> Thursday { get; set; }
-        [NotMapped]
-        public List<int> Friday { get; set; }
-        [NotMapped]
-        public List<int> Saturday { get; set; }
-        [NotMapped]
-        public List<int> Sunday { get; set; }
+        public List<TrainingId> Monday { get; set; }
+        public List<TrainingId> Tuesday { get; set; }
+        public List<TrainingId> Wednesday { get; set; }
+        public List<TrainingId> Thursday { get; set; }
+        public List<TrainingId> Friday { get; set; }
+        public List<TrainingId> Saturday { get; set; }
+        public List<TrainingId> Sunday { get; set; }
     }
 }

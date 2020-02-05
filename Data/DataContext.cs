@@ -21,11 +21,6 @@ namespace GliwickiDzik.Data
 
          protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<PlanModel>().HasMany(p => p.Trainings)
-                    .WithOne(t => t.Plan)
-                    .HasForeignKey(k => k.PlanId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
             builder.Entity<UserModel>().HasKey(k => k.UserId);
 
             builder.Entity<PlanModel>().HasKey(k => k.PlanId);

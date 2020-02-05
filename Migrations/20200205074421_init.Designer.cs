@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GliwickiDzik.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200202100756_DbInit")]
-    partial class DbInit
+    [Migration("20200205074421_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,14 +49,63 @@ namespace GliwickiDzik.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PlanId")
+                    b.Property<int?>("PlanModelPlanId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlanId");
+                    b.HasIndex("PlanModelPlanId");
 
                     b.ToTable("TrainingsForPlan");
+                });
+
+            modelBuilder.Entity("GliwickiDzik.API.Helpers.TrainingId", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TrainId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingsForPlanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingsForPlanId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingsForPlanId2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingsForPlanId3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingsForPlanId4")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingsForPlanId5")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TrainingsForPlanId6")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainingsForPlanId");
+
+                    b.HasIndex("TrainingsForPlanId1");
+
+                    b.HasIndex("TrainingsForPlanId2");
+
+                    b.HasIndex("TrainingsForPlanId3");
+
+                    b.HasIndex("TrainingsForPlanId4");
+
+                    b.HasIndex("TrainingsForPlanId5");
+
+                    b.HasIndex("TrainingsForPlanId6");
+
+                    b.ToTable("TrainingId");
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.CommentModel", b =>
@@ -323,11 +372,40 @@ namespace GliwickiDzik.Migrations
 
             modelBuilder.Entity("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", b =>
                 {
-                    b.HasOne("GliwickiDzik.API.Models.PlanModel", "Plan")
+                    b.HasOne("GliwickiDzik.API.Models.PlanModel", null)
                         .WithMany("Trainings")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PlanModelPlanId");
+                });
+
+            modelBuilder.Entity("GliwickiDzik.API.Helpers.TrainingId", b =>
+                {
+                    b.HasOne("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", null)
+                        .WithMany("Friday")
+                        .HasForeignKey("TrainingsForPlanId");
+
+                    b.HasOne("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", null)
+                        .WithMany("Monday")
+                        .HasForeignKey("TrainingsForPlanId1");
+
+                    b.HasOne("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", null)
+                        .WithMany("Saturday")
+                        .HasForeignKey("TrainingsForPlanId2");
+
+                    b.HasOne("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", null)
+                        .WithMany("Sunday")
+                        .HasForeignKey("TrainingsForPlanId3");
+
+                    b.HasOne("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", null)
+                        .WithMany("Thursday")
+                        .HasForeignKey("TrainingsForPlanId4");
+
+                    b.HasOne("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", null)
+                        .WithMany("Tuesday")
+                        .HasForeignKey("TrainingsForPlanId5");
+
+                    b.HasOne("GliwickiDzik.API.Helpers.Params.TrainingsForPlan", null)
+                        .WithMany("Wednesday")
+                        .HasForeignKey("TrainingsForPlanId6");
                 });
 
             modelBuilder.Entity("GliwickiDzik.API.Models.CommentModel", b =>

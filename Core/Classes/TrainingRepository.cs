@@ -18,6 +18,7 @@ namespace GliwickiDzik.API.Data
         public async Task<PagedList<TrainingModel>> GetAllParametedTrainingsAsync(int userId, TrainingParams trainingParams)
         {
             var trainings = _dataContext.TrainingModel
+                    .Include(t => t.Exercises)
                     .Where(t => t.OwnerId == userId)
                     .OrderByDescending(t => t.Name);
 
@@ -40,7 +41,18 @@ namespace GliwickiDzik.API.Data
 
         public async Task<IEnumerable<TrainingModel>> GetAllTrainingsAsync(int userId)
         {
-            return await _dataContext.TrainingModel.Where(t => t.OwnerId == userId).ToListAsync();
+            return await _dataContext.TrainingModel
+                            .Include(t => t.Exercises)
+                            .Where(t => t.OwnerId == userId)
+                            .ToListAsync();
+        }
+
+        public async Task<TrainingModel> GetOneTrainingAsync(int trainingId)
+        {
+            return await _dataContext.TrainingModel
+                            .Include(t => t.Exercises)
+                            .Where(t => t.TrainingId == trainingId)
+                            .FirstOrDefaultAsync();
         }
     }  
 }
